@@ -1,0 +1,69 @@
+{
+	"name": "pch-lightgraph-extension",
+	"uuid": "be9b98d89c134b9bb23382ff425f94ff",
+	"displayName": "PCB lightgraph Extension",
+	"description": "将 2D 插画一键转换为可制造 PCB 分层图纸的工具",
+	"version": "0.0.4",
+	"publisher": "wasd, Laplac heroin",
+	"engines": {
+		"eda": "^3.2.0"
+	},
+	"license": "MIT License",
+	"repository": {
+		"type": "extension-store",
+		"url": ""
+	},
+	"categories": "Other",
+	"keywords": [
+		"Tool"
+	],
+	"images": {
+		"logo": "./images/logo.png"
+	},
+	"homepage": "",
+	"bugs": "",
+	"activationEvents": {},
+	"entry": "./dist/index",
+	"dependentExtensions": {},
+	"headerMenus": {
+		"home": [
+			{
+				"id": "menuId1",
+				"title": "PCB lightgraph",
+				"menuItems": [
+					{
+						"id": "About",
+						"title": "Open",
+						"registerFn": "about"
+					}
+				]
+			}
+		],
+		"sch": [
+			{
+				"id": "menuId2",
+				"title": "PCB lightgraph",
+				"menuItems": [
+					{
+						"id": "About",
+						"title": "Open",
+						"registerFn": "about"
+					}
+				]
+			}
+		],
+		"pcb": [
+			{
+				"id": "menuId3",
+				"title": "PCB lightgraph",
+				"menuItems": [
+					{
+						"id": "About",
+						"title": "Open",
+						"registerFn": "about"
+					}
+				]
+			}
+		]
+	}
+}
