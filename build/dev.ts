@@ -13,6 +13,8 @@ import { fixUuid, packageExtension, testUuid } from './utils.ts';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 调试包只应提供给本机 EDA 客户端，避免局域网连接获取扩展文件。
+const WEBSOCKET_HOST = '127.0.0.1';
 const WEBSOCKET_PORT = 59394;
 const DIST_DIR = path.join(__dirname, '../dist');
 const ROOT_DIR = path.join(__dirname, '../');
@@ -80,8 +82,8 @@ async function main() {
 	fs.ensureDirSync(DIST_DIR);
 
 	// 启动 WebSocket 服务器
-	const wss = new WebSocketServer({ port: WEBSOCKET_PORT });
-	console.log(`[Dev Mode] WebSocket server started: ws://localhost:${WEBSOCKET_PORT}`);
+	const wss = new WebSocketServer({ host: WEBSOCKET_HOST, port: WEBSOCKET_PORT });
+	console.log(`[Dev Mode] WebSocket server started: ws://${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
 
 	wss.on('connection', async (ws) => {
 		console.log('[Dev Mode] New client connected');

@@ -50,8 +50,6 @@
 
 具体功能和 [PCB_lightgraph_Portable](https://github.com/Ashlixy17/PCB_lightgraph_Portable) 完全相同，具体功能可以看 [README](https://github.com/Ashlixy17/PCB_lightgraph_Portable/blob/main/README.md) 中的解释。
 
-
-
 ## 技术与许可
 
 - 界面和图像处理运行在 EDA 扩展的内嵌页面中，基于 Canvas `ImageData` 完成逐像素分层。
@@ -62,7 +60,6 @@
 <p align="center">
   <img src="images/support.gif" alt="感谢支持" width="180">
 </p>
-
 
 **原安装版软件**：
 [PCB_lightgraph](https://github.com/tomatorigid/PCB_lightgraph)<br>

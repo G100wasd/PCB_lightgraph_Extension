@@ -16,11 +16,56 @@ const GITEE_BRANCH = 'master';
 
 const GITHUB_BASE_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}`;
 const GITEE_BASE_URL = `https://raw.giteeusercontent.com/${GITEE_OWNER}/${GITEE_REPO}/raw/${GITEE_BRANCH}`;
+const PROJECT_ROOT = path.resolve(__dirname, '../');
+
+interface SdkManifest {
+	version: string;
+	frameworkFiles: string[];
+}
+
+interface DownloadedFrameworkFile {
+	content: string;
+	filePath: string;
+	fullPath: string;
+}
+
+/**
+ * 仅允许项目目录内的普通相对文件，避免远端清单通过路径穿越覆盖任意位置。
+ */
+function resolveFrameworkFilePath(filePath: unknown): string | null {
+	if (typeof filePath !== 'string' || !filePath || filePath.includes('\0')) {
+		return null;
+	}
+
+	const normalizedPath = filePath.replaceAll('\\', '/');
+	if (path.posix.isAbsolute(normalizedPath)) {
+		return null;
+	}
+
+	const resolvedPath = path.resolve(PROJECT_ROOT, normalizedPath);
+	const relativePath = path.relative(PROJECT_ROOT, resolvedPath);
+	if (!relativePath || relativePath.startsWith(`..${path.sep}`) || path.isAbsolute(relativePath)) {
+		return null;
+	}
+
+	return resolvedPath;
+}
+
+function isSdkManifest(value: unknown): value is SdkManifest {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+
+	const manifest = value as Partial<SdkManifest>;
+	return typeof manifest.version === 'string'
+		&& Array.isArray(manifest.frameworkFiles)
+		&& manifest.frameworkFiles.every(filePath => resolveFrameworkFilePath(filePath) !== null);
+}
 
 /**
  * 获取本地 manifest
  */
-function getLocalManifest(): { version: string; frameworkFiles: string[] } | null {
+function getLocalManifest(): SdkManifest | null {
 	const manifestPath = path.join(__dirname, '../.sdk-manifest.json');
 	if (!fs.existsSync(manifestPath)) {
 		return null;
@@ -63,12 +108,12 @@ async function fetchText(url: string): Promise<string | null> {
 /**
  * 获取远程 manifest（带回退）
  */
-async function getRemoteManifest(): Promise<{ version: string; frameworkFiles: string[] } | null> {
+async function getRemoteManifest(): Promise<SdkManifest | null> {
 	// 先尝试 GitHub
 	const githubUrl = `${GITHUB_BASE_URL}/.sdk-manifest.json`;
-	let manifest = await fetchJson<{ version: string; frameworkFiles: string[] }>(githubUrl);
+	let manifest = await fetchJson<unknown>(githubUrl);
 
-	if (manifest) {
+	if (isSdkManifest(manifest)) {
 		console.log('[GitHub] Manifest fetched successfully');
 		return manifest;
 	}
@@ -76,9 +121,9 @@ async function getRemoteManifest(): Promise<{ version: string; frameworkFiles: s
 	// GitHub 失败，回退到 Gitee
 	console.log('[GitHub] Failed to fetch manifest, trying Gitee...');
 	const giteeUrl = `${GITEE_BASE_URL}/.sdk-manifest.json`;
-	manifest = await fetchJson<{ version: string; frameworkFiles: string[] }>(giteeUrl);
+	manifest = await fetchJson<unknown>(giteeUrl);
 
-	if (manifest) {
+	if (isSdkManifest(manifest)) {
 		console.log('[Gitee] Manifest fetched successfully');
 		return manifest;
 	}
@@ -124,9 +169,15 @@ function mergePackageJson(local: any, remote: any): any {
 }
 
 /**
- * 下载文件（带回退）
+ * 下载并校验框架文件（带回退），成功后由更新流程统一写入。
  */
-async function downloadFile(filePath: string): Promise<boolean> {
+async function fetchFrameworkFile(filePath: string): Promise<DownloadedFrameworkFile | null> {
+	const fullPath = resolveFrameworkFilePath(filePath);
+	if (!fullPath) {
+		console.error(`Rejected unsafe framework file path: ${filePath}`);
+		return null;
+	}
+
 	// 先尝试 GitHub
 	const githubUrl = `${GITHUB_BASE_URL}/${filePath}`;
 	let content = await fetchText(githubUrl);
@@ -145,14 +196,11 @@ async function downloadFile(filePath: string): Promise<boolean> {
 		}
 		else {
 			console.error(`Download failed: ${filePath}`);
-			return false;
+			return null;
 		}
 	}
 
-	const fullPath = path.join(__dirname, '../', filePath);
-	fs.ensureDirSync(path.dirname(fullPath));
-	fs.writeFileSync(fullPath, content, 'utf-8');
-	return true;
+	return { content, filePath, fullPath };
 }
 
 /**
@@ -204,13 +252,7 @@ async function performUpdate() {
 
 	console.log(`Starting update: ${localManifest?.version ?? 'unknown'} → ${remoteManifest.version}`);
 
-	// 备份 package.json
 	const packageJsonPath = path.join(__dirname, '../package.json');
-	const packageJsonBackupPath = path.join(__dirname, '../package.json.backup');
-	fs.copySync(packageJsonPath, packageJsonBackupPath);
-	console.log('Backed up package.json → package.json.backup');
-
-	// 智能合并 package.json
 	const localPackageJson = fs.readJsonSync(packageJsonPath);
 
 	// 先尝试 GitHub 获取 package.json
@@ -225,17 +267,32 @@ async function performUpdate() {
 		return false;
 	}
 
+	// 所有远端文件均验证、下载成功后才开始写入，避免留下半更新状态。
+	const downloadedFrameworkFiles: DownloadedFrameworkFile[] = [];
+	for (const filePath of remoteManifest.frameworkFiles) {
+		const downloadedFile = await fetchFrameworkFile(filePath);
+		if (!downloadedFile) {
+			console.error('Framework update aborted because a required file could not be downloaded');
+			return false;
+		}
+		downloadedFrameworkFiles.push(downloadedFile);
+	}
+
+	// 备份 package.json
+	const packageJsonBackupPath = path.join(__dirname, '../package.json.backup');
+	fs.copySync(packageJsonPath, packageJsonBackupPath);
+	console.log('Backed up package.json → package.json.backup');
+
+	// 智能合并 package.json
 	const mergedPackageJson = mergePackageJson(localPackageJson, remotePackageJson);
 	fs.writeJsonSync(packageJsonPath, mergedPackageJson, { spaces: '\t', EOL: '\n' });
 	console.log('Merged package.json');
 
 	// 下载框架文件
-	const frameworkFiles = remoteManifest.frameworkFiles ?? [];
-	for (const file of frameworkFiles) {
-		const success = await downloadFile(file);
-		if (success) {
-			console.log(`Updated: ${file}`);
-		}
+	for (const { content, filePath, fullPath } of downloadedFrameworkFiles) {
+		fs.ensureDirSync(path.dirname(fullPath));
+		fs.writeFileSync(fullPath, content, 'utf-8');
+		console.log(`Updated: ${filePath}`);
 	}
 
 	// 更新 manifest

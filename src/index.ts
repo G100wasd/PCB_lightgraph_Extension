@@ -16,7 +16,7 @@
  * For more development details, please visit:
  * https://prodocs.easyeda.com/en/api/guide/
  */
-export function activate(status?: 'onStartupFinished', arg?: string): void {}
+export function activate(_status?: 'onStartupFinished', _arg?: string): void {}
 
 export async function about(): Promise<void> {
 	await eda.sys_IFrame.openIFrame('/iframe/index.html', 960, 600, 'pcb-lightgraph-window', {
