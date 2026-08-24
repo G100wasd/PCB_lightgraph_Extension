@@ -251,6 +251,66 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .modal input[type=number]{width:90px;background:var(--panel2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:11px;}
 .modal input[type=color]{width:46px;height:30px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);padding:1px;}
 .modal .btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+/* ---- EDA 工作台主题：仅覆盖界面层，保留便捷版原有规则与动画。 ---- */
+body[data-ui-theme="eda"]{
+  --bg:#292929;--panel:#343434;--panel2:#3d3d3d;--border:#4a4a4a;
+  --text:#e5e5e5;--text-dim:#b5b5b5;--accent:#2589e8;--accent-hover:#469cf0;
+  --control-accent:#2589e8;--control-accent-text:#fff;--radius:2px;
+  background:#2b2b2b;
+}
+body[data-ui-theme="eda"] .topbar{min-height:34px;padding:0 10px;gap:4px;background:#383838;border-bottom-color:#222;}
+body[data-ui-theme="eda"] .brand{font-size:12px;margin-right:10px;}
+body[data-ui-theme="eda"] .brand-badge{background:#565656;color:#d7d7d7;border-radius:1px;padding:1px 4px;}
+body[data-ui-theme="eda"] .menubar{gap:0;}
+body[data-ui-theme="eda"] .menu>button{padding:8px 10px;border-radius:0;font-size:12px;}
+body[data-ui-theme="eda"] .menu>button:hover,body[data-ui-theme="eda"] .menu:focus-within>button{background:#4b4b4b;}
+body[data-ui-theme="eda"] .star-link{position:static;transform:none;margin-left:auto;padding:4px 8px;border-radius:2px;color:#a6a6a6;font-weight:400;animation:none;}
+body[data-ui-theme="eda"] .star-link:hover{background:#454545;color:#fff;}
+body[data-ui-theme="eda"] .eda-toolbar{display:flex;align-items:center;gap:4px;min-height:38px;padding:4px 10px;background:#303030;border-bottom:1px solid #1f1f1f;}
+body:not([data-ui-theme="eda"]) .eda-toolbar{display:none;}
+body[data-ui-theme="eda"] .toolbar-group{display:flex;gap:2px;padding-right:7px;margin-right:3px;border-right:1px solid #4b4b4b;}
+body[data-ui-theme="eda"] .toolbar-group:last-child{border-right:0;}
+body[data-ui-theme="eda"] .toolbar-button{min-width:28px;height:28px;padding:0 8px;background:#3b3b3b;border:1px solid transparent;border-radius:2px;color:#ddd;font:11px inherit;cursor:pointer;}
+body[data-ui-theme="eda"] .toolbar-button:hover:not(:disabled){background:#4a4a4a;border-color:#5a5a5a;}
+body[data-ui-theme="eda"] .toolbar-button:focus-visible,body[data-ui-theme="eda"] button:focus-visible,body[data-ui-theme="eda"] select:focus-visible,body[data-ui-theme="eda"] input:focus-visible{outline:1px solid #59a8f3;outline-offset:-1px;}
+body[data-ui-theme="eda"] .toolbar-button.active,body[data-ui-theme="eda"] .toolbar-button.primary{background:#2589e8;color:#fff;}
+body[data-ui-theme="eda"] .toolbar-button:disabled{opacity:.4;cursor:not-allowed;}
+body[data-ui-theme="eda"] .dropdown{background:#454545;border-color:#5a5a5a;border-radius:1px;padding:3px;box-shadow:0 5px 14px rgba(0,0,0,.45);}
+body[data-ui-theme="eda"] .dropdown button,body[data-ui-theme="eda"] .dropdown .menu-check{border-radius:1px;padding:6px 10px;}
+body[data-ui-theme="eda"] .dropdown button:hover,body[data-ui-theme="eda"] .dropdown .menu-check:hover{background:#397eb9;}
+body[data-ui-theme="eda"] .main{background:#292929;}
+body[data-ui-theme="eda"] .col-controls{order:1;flex:0 0 286px;min-width:250px;max-width:330px;padding:7px;background:#303030;border-color:#1f1f1f;}
+body[data-ui-theme="eda"] .col-preview{order:2;padding:7px;gap:4px;background:#272727;}
+body[data-ui-theme="eda"] .col-layers{order:3;flex:0 0 286px;min-width:235px;padding:7px;background:#303030;border-left:1px solid #1f1f1f;}
+body[data-ui-theme="eda"] .hint,body[data-ui-theme="eda"] .preview-image-meta{padding:2px 4px;color:#b6b6b6;}
+body[data-ui-theme="eda"] .preview-wrap,body[data-ui-theme="eda"] .quad-cell .w,body[data-ui-theme="eda"] .layers-grid .lp .w{border-radius:1px;border-color:#4b4b4b;background-color:#151515;background-image:radial-gradient(#333 0.7px,transparent .7px);background-size:5px 5px;}
+body[data-ui-theme="eda"] .quad-grid,body[data-ui-theme="eda"] .layers-grid{gap:6px;}
+body[data-ui-theme="eda"] .layers-grid{flex:0 1 54%;}
+body[data-ui-theme="eda"] .quad-cell .t,body[data-ui-theme="eda"] .layers-grid .lp .t{padding-left:3px;color:#c5c5c5;}
+body[data-ui-theme="eda"] .group{margin-bottom:6px;background:#353535;border-color:#484848;border-radius:1px;}
+body[data-ui-theme="eda"] .group>.group-header{min-height:28px;padding:6px 8px;background:#3b3b3b;font-size:11px;font-weight:600;}
+body[data-ui-theme="eda"] .group>.group-header:hover{background:#454545;}
+body[data-ui-theme="eda"] .group .inner{padding:3px 8px 8px;}
+body[data-ui-theme="eda"] label.ctl{margin:7px 0;}
+body[data-ui-theme="eda"] select,body[data-ui-theme="eda"] input[type="number"]{background:#2c2c2c;border-color:#505050;border-radius:1px;padding:5px 7px;}
+body[data-ui-theme="eda"] input[type=range]{height:4px;border-radius:0;background:#272727;border-color:#4a4a4a;}
+body[data-ui-theme="eda"] input[type=range]::-webkit-slider-thumb{width:12px;height:12px;border-radius:1px;background:#2589e8;}
+body[data-ui-theme="eda"] input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:1px;background:#2589e8;}
+body[data-ui-theme="eda"] .check,body[data-ui-theme="eda"] .radio{gap:6px;margin:6px 0;}
+body[data-ui-theme="eda"] .check input,body[data-ui-theme="eda"] .radio input,body[data-ui-theme="eda"] .dropdown .menu-check input{accent-color:#2589e8;}
+body[data-ui-theme="eda"] button.btn,body[data-ui-theme="eda"] button.drawing-action-btn{border-radius:1px;padding:7px 9px;background:#414141;border-color:#585858;transition:background 80ms linear,border-color 80ms linear;}
+body[data-ui-theme="eda"] button.btn:hover:not(:disabled){background:#4d4d4d;border-color:#6c6c6c;}
+body[data-ui-theme="eda"] button.btn.accent,body[data-ui-theme="eda"] button.drawing-action-btn.action-selected{background:#2589e8;border-color:#2589e8;color:#fff;}
+body[data-ui-theme="eda"] button.btn.accent:hover:not(:disabled),body[data-ui-theme="eda"] button.drawing-action-btn.action-selected:hover:not(:disabled){background:#469cf0;border-color:#469cf0;}
+body[data-ui-theme="eda"] .mode-switch{gap:0;margin-bottom:7px;padding:0;border-radius:1px;border-color:#4b4b4b;background:#292929;}
+body[data-ui-theme="eda"] .mode-switch button,body[data-ui-theme="eda"] .paint-tool{border-radius:1px;padding:7px 6px;transition:background 80ms linear,color 80ms linear;}
+body[data-ui-theme="eda"] .mode-switch button.active,body[data-ui-theme="eda"] .paint-tool.active{background:#2589e8;color:#fff;}
+body[data-ui-theme="eda"] .mode-switch button::before,body[data-ui-theme="eda"] .mode-switch button::after,body[data-ui-theme="eda"] .drawing-action-btn::before,body[data-ui-theme="eda"] .drawing-action-btn::after,body[data-ui-theme="eda"] .paint-tool::before,body[data-ui-theme="eda"] .paint-tool::after,body[data-ui-theme="eda"] .star-link::before,body[data-ui-theme="eda"] .star-link::after{display:none;animation:none;}
+body[data-ui-theme="eda"] .modal{border-radius:1px;background:#3b3b3b;border-color:#5a5a5a;box-shadow:0 12px 30px rgba(0,0,0,.6);}
+body[data-ui-theme="eda"] #toast{border-radius:1px;background:#414141;border-color:#5a5a5a;}
+body[data-ui-theme="eda"] #edaDock{margin-top:6px;border-top:1px solid #4a4a4a;padding-top:6px;}
+body:not([data-ui-theme="eda"]) #edaDock{display:none;}
+@media (max-width:960px){body[data-ui-theme="eda"] .main{overflow:auto;}body[data-ui-theme="eda"] .col-controls{flex-basis:245px;min-width:220px;}body[data-ui-theme="eda"] .col-layers{flex-basis:230px;min-width:210px;}.toolbar-button[data-quick-action="paint"]{display:none;}}
 /* 内置画板直接编辑原图像素；显示尺寸仅用于适配窗口，不改变源图分辨率。 */
 .paint-modal{width:min(1120px,94vw);max-width:1120px;height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;}
 .paint-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border);}
@@ -286,7 +346,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 }
 </style>
 </head>
-<body>
+<body data-ui-theme="eda">
 
 <div class="topbar">
   <div class="brand"><span data-i18n="brandName">PCB图片分层器</span><span class="brand-badge" id="brandBadge">插件版</span></div>
@@ -325,6 +385,13 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
           <button type="button" data-i18n="uiScaleMenu">界面缩放 ▸</button>
           <div class="dropdown" id="scaleMenu"></div>
         </div>
+        <div class="submenu" id="subInterface">
+          <button type="button" data-i18n="uiThemeMenu">界面风格 ▸</button>
+          <div class="dropdown" id="uiThemeMenu">
+            <button type="button" data-ui-theme-choice="portable" data-i18n="uiThemePortable">便捷版 UI</button>
+            <button type="button" data-ui-theme-choice="eda" data-i18n="uiThemeEda">EDA 界面 UI</button>
+          </div>
+        </div>
         <div class="submenu" id="subLanguage">
           <button type="button" data-i18n="languageMenu">语言 ▸</button>
           <div class="dropdown" id="languageMenu">
@@ -357,6 +424,22 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
     </div>
   </div>
   <button type="button" class="star-link" id="btnStarProject" data-i18n="starProject">你觉得好用就给我点一个Star吧(ﾉ&gt;ω&lt;)ﾉ</button>
+</div>
+
+<div class="eda-toolbar" role="toolbar" aria-label="EDA 工作台快捷工具栏" data-i18n-aria="edaToolbar">
+  <div class="toolbar-group">
+    <button type="button" class="toolbar-button primary" data-quick-action="import-image" data-i18n="toolbarImport">导入图片</button>
+    <button type="button" class="toolbar-button" data-quick-action="save-project" data-i18n="toolbarSave">保存工程</button>
+    <button type="button" class="toolbar-button" data-quick-action="export-all" disabled data-i18n="toolbarExport">导出图纸</button>
+  </div>
+  <div class="toolbar-group">
+    <button type="button" class="toolbar-button" data-quick-action="paint" disabled data-i18n="toolbarEdit">快捷编辑</button>
+  </div>
+  <div class="toolbar-group">
+    <button type="button" class="toolbar-button active" data-quick-view="overlay" data-i18n="viewOverlay">叠加视图</button>
+    <button type="button" class="toolbar-button" data-quick-view="split" data-i18n="viewSplit">分隔视图</button>
+    <button type="button" class="toolbar-button" data-quick-view="quad" data-i18n="viewQuad">四分视图</button>
+  </div>
 </div>
 
 <div class="main">
@@ -511,6 +594,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
       <div class="lp" id="bottomPreviewItem"><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
     </div>
+    <div id="edaDock"></div>
   </div>
 </div>
 
@@ -609,12 +693,17 @@ Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（插件版
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（擴充版）', brandName:'PCB圖片分層器', brandEdition:'擴充版' });
 Object.assign(TRANSLATIONS.en, { pageTitle:'PCB_lightgraph Extension', brandName:'PCB_lightgraph', brandEdition:'Extension' });
 Object.assign(TRANSLATIONS.ja, { pageTitle:'PCB画像レイヤー分離器（拡張版）', brandName:'PCB画像レイヤー分離器', brandEdition:'拡張版' });
+Object.assign(TRANSLATIONS['zh-CN'], { uiThemeMenu:'界面风格 ▸', uiThemePortable:'便捷版 UI', uiThemeEda:'EDA 界面 UI', edaToolbar:'EDA 工作台快捷工具栏', toolbarImport:'导入图片', toolbarSave:'保存工程', toolbarExport:'导出图纸', toolbarEdit:'快捷编辑' });
+Object.assign(TRANSLATIONS['zh-TW'], { uiThemeMenu:'介面風格 ▸', uiThemePortable:'便捷版 UI', uiThemeEda:'EDA 介面 UI', edaToolbar:'EDA 工作台快捷工具列', toolbarImport:'匯入圖片', toolbarSave:'儲存工程', toolbarExport:'匯出圖紙', toolbarEdit:'快速編輯' });
+Object.assign(TRANSLATIONS.en, { uiThemeMenu:'Interface Style ▸', uiThemePortable:'Portable UI', uiThemeEda:'EDA UI', edaToolbar:'EDA workbench toolbar', toolbarImport:'Import Image', toolbarSave:'Save Project', toolbarExport:'Export Drawings', toolbarEdit:'Quick Edit' });
+Object.assign(TRANSLATIONS.ja, { uiThemeMenu:'UI スタイル ▸', uiThemePortable:'ポータブル UI', uiThemeEda:'EDA UI', edaToolbar:'EDA ワークベンチツールバー', toolbarImport:'画像を読み込む', toolbarSave:'プロジェクトを保存', toolbarExport:'図面を書き出す', toolbarEdit:'クイック編集' });
 const PRODUCT_NAME = 'PCB_lightgraph Extension';
 const APP_VERSION = 'v0.1.0';
 const GITHUB_REPOSITORY = 'G100wasd/PCB_lightgraph_Extension';
 const GITHUB_RELEASES_URL = 'https://github.com/' + GITHUB_REPOSITORY + '/releases';
 const GITHUB_LATEST_RELEASE_API = 'https://api.github.com/repos/' + GITHUB_REPOSITORY + '/releases/latest';
 let currentLanguage = 'zh-CN';
+let currentUiTheme = 'eda';
 function t(key, values){
   let text = (TRANSLATIONS[currentLanguage] && TRANSLATIONS[currentLanguage][key]) || TRANSLATIONS['zh-CN'][key] || key;
   if(values) for(const name in values) text = text.replaceAll('{'+name+'}', String(values[name]));
@@ -636,6 +725,7 @@ function applyTranslations(){
   document.querySelectorAll('[data-i18n-title]').forEach(node => { node.title = t(node.dataset.i18nTitle); });
   document.querySelectorAll('.lab[data-i18n-slider]').forEach(label => refreshSliderLabel(label, label.parentElement.querySelector('input')));
   document.querySelectorAll('[data-language]').forEach(button => button.classList.toggle('active', button.dataset.language === currentLanguage));
+  document.querySelectorAll('[data-ui-theme-choice]').forEach(button => button.classList.toggle('active', button.dataset.uiThemeChoice === currentUiTheme));
   syncImportDrawingButton();
   syncPreviewImageMeta();
 }
@@ -643,6 +733,21 @@ function setLanguage(language, persist){
   currentLanguage = TRANSLATIONS[language] ? language : 'zh-CN';
   if(persist) localStorage.setItem('pcblg_language', currentLanguage);
   applyTranslations();
+}
+function syncUiThemeLayout(){
+  const edaImportGroup = el('#groupEdaImport');
+  if(!edaImportGroup) return;
+  if(currentUiTheme === 'eda') el('#edaDock').append(edaImportGroup);
+  else el('#groupActions').before(edaImportGroup);
+}
+function setUiTheme(theme, persist){
+  currentUiTheme = theme === 'portable' ? 'portable' : 'eda';
+  document.body.dataset.uiTheme = currentUiTheme;
+  if(persist) localStorage.setItem('pcblg_ui_theme', currentUiTheme);
+  syncUiThemeLayout();
+  document.querySelectorAll('[data-ui-theme-choice]').forEach(button => button.classList.toggle('active', button.dataset.uiThemeChoice === currentUiTheme));
+  if(typeof state !== 'undefined' && state.viewMode) setViewMode(state.viewMode);
+  requestAnimationFrame(schedulePreviewResize);
 }
 
 /* ---------------- 基础工具 ---------------- */
@@ -1581,8 +1686,9 @@ function setViewMode(mode){
   const isQuad = state.viewMode === 'quad';
   el('#compositeWrap').hidden = isQuad;
   el('#quadGrid').hidden = !isQuad;
-  el('#colLayers').style.display = state.viewMode === 'split' ? 'flex' : 'none';
+  el('#colLayers').style.display = (currentUiTheme === 'eda' || state.viewMode === 'split') ? 'flex' : 'none';
   document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
+  document.querySelectorAll('[data-quick-view]').forEach(btn => btn.classList.toggle('active', btn.dataset.quickView === state.viewMode));
   updateQuadPlaceholders();
   syncPreviewImageMeta();
   // 先同步当前尺寸，再在布局稳定后复核一次，避免隐藏画布被浏览器拉伸。
@@ -2591,6 +2697,8 @@ function setExportControlsEnabled(enabled){
   el('#btnImportSelectedEda').disabled = !enabled;
   el('#btnImportAllEda').disabled = !enabled;
   el('#mExport').classList.toggle('disabled', !enabled);
+  const toolbarExport = document.querySelector('[data-quick-action="export-all"]');
+  if(toolbarExport) toolbarExport.disabled = !enabled;
 }
 function syncImportDrawingButton(){
   const button = el('#btnImport');
@@ -2603,6 +2711,8 @@ function syncImportDrawingButton(){
   }
   const quickEdit = el('#mPaint');
   if(quickEdit){ quickEdit.disabled = !hasSourceImage; quickEdit.classList.toggle('disabled', !hasSourceImage); }
+  const toolbarEdit = document.querySelector('[data-quick-action="paint"]');
+  if(toolbarEdit) toolbarEdit.disabled = !hasSourceImage;
 }
 function getExportSettings(){
   if(!state.origin) return;
@@ -3119,6 +3229,18 @@ function setupMenus(){
   el('#btnStarProject').onclick = () => window.open('https://github.com/' + GITHUB_REPOSITORY, '_blank', 'noopener');
   el('#mGitHub').onclick = () => window.open('https://github.com/' + GITHUB_REPOSITORY, '_blank', 'noopener');
   el('#mIssueFeedback').onclick = () => window.open('https://github.com/' + GITHUB_REPOSITORY + '/issues/new', '_blank', 'noopener');
+  const quickActions = {
+    'import-image': () => el('#fileInput').click(),
+    'save-project': saveProject,
+    'export-all': exportLayers,
+    'paint': openPaintEditor
+  };
+  document.querySelectorAll('[data-quick-action]').forEach(button => {
+    button.onclick = () => { const action = quickActions[button.dataset.quickAction]; if(action) action(); };
+  });
+  document.querySelectorAll('[data-quick-view]').forEach(button => {
+    button.onclick = () => setViewMode(button.dataset.quickView);
+  });
 
   // 界面缩放子菜单
   const scaleMenu = el('#scaleMenu');
@@ -3136,6 +3258,9 @@ function setupMenus(){
     button.onclick = function(){
       setLanguage(this.dataset.language, true);
     };
+  });
+  document.querySelectorAll('[data-ui-theme-choice]').forEach(button => {
+    button.onclick = function(){ setUiTheme(this.dataset.uiThemeChoice, true); };
   });
 }
 
@@ -3206,6 +3331,7 @@ function resetAllSettings(){
   localStorage.removeItem('pcblg_scale');
   localStorage.removeItem('pcblg_prefs');
   localStorage.removeItem('pcblg_language');
+  localStorage.removeItem('pcblg_ui_theme');
 	  document.body.style.zoom = 1;
   custom.enig = {...DEFAULTS.enig}; custom.osp = {...DEFAULTS.osp}; custom.hasl = {...DEFAULTS.hasl}; custom.bare = {...DEFAULTS.bare};
   state.prefilter = { enabled:true, kernel:5, sigma:1.1 };
@@ -3228,6 +3354,7 @@ function resetAllSettings(){
   setProcessingMode('gray', false);
   if(state.origin) updateProcess();
   setLanguage('zh-CN', false);
+  setUiTheme('eda', false);
   toast(t('resetSuccess'));
 }
 
@@ -3237,6 +3364,7 @@ function saveLocalPrefs(){
 }
 function loadLocalPrefs(){
   setLanguage(localStorage.getItem('pcblg_language'), false);
+  setUiTheme(localStorage.getItem('pcblg_ui_theme'), false);
   const s = localStorage.getItem('pcblg_scale');
 	if(s) document.body.style.zoom = parseFloat(s) || 1;
   const p = localStorage.getItem('pcblg_prefs');
