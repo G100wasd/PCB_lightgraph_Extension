@@ -148,6 +148,11 @@ select{
   width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
   border-radius:6px;padding:6px 8px;font-size:11px;font-family:inherit;outline:none;
 }
+input[type="number"]{
+  width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
+  border-radius:6px;padding:6px 8px;font:inherit;font-size:11px;outline:none;
+}
+input[type="number"]:focus{border-color:var(--control-accent);}
 /* 操作区控件共用模式选中态配色，预览画布仍保留独立的蓝色提示。 */
 select:focus{border-color:var(--control-accent);}
 input[type=range]{
@@ -182,6 +187,10 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .btn-row.centered{justify-content:center;}
 .flex-fill{flex:1;}
 .note{margin:9px 0 0;color:var(--text-dim);font-size:10px;line-height:1.5;}
+.eda-import-position{margin-bottom:14px;}
+.eda-import-position .ctl{margin:7px 0 0;}
+.eda-import-select{margin:0 0 16px;}
+.eda-import-actions{display:flex;flex-direction:column;gap:12px;}
 /* 分层算法切换：仅展示当前算法所需的参数，避免误以为隐藏控件仍会生效。 */
 .mode-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;margin-bottom:10px;}
 .mode-switch button{position:relative;flex:1;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 6px;cursor:pointer;font:inherit;font-size:10.5px;transition:color 220ms ease,background 220ms ease;}
@@ -453,7 +462,7 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
       </div>
     </div>
 
-    <div class="group open" id="groupActions">
+    <div class="group" id="groupActions">
       <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="drawingActions">图纸操作</span></button>
       <div class="content"><div class="inner">
         <div class="btn-row">
@@ -469,6 +478,28 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
           </select>
         </label>
         <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
+      </div></div>
+    </div>
+    <div class="group open" id="groupEdaImport">
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edaImport">导入到 EDA 中</span></button>
+      <div class="content"><div class="inner">
+        <div class="btn-row eda-import-position">
+          <label class="ctl flex-fill"><span class="lab" data-i18n="edaCoordinateX">X 坐标（mil）</span><input id="inputEdaX" type="number" value="0" step="1"></label>
+          <label class="ctl flex-fill"><span class="lab" data-i18n="edaCoordinateY">Y 坐标（mil）</span><input id="inputEdaY" type="number" value="0" step="1"></label>
+        </div>
+        <p class="note" data-i18n="edaImportHint">将在当前 PCB 中生成图元；坐标原点为 (0, 0)。</p>
+        <label class="ctl eda-import-select"><span class="lab" data-i18n="edaImportLayerSelect">选择要导入的图纸</span>
+          <select id="selectImportEdaLayer" disabled>
+            <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
+            <option value="Top_Mask" data-i18n="layerMask">Top Mask（阻焊）</option>
+            <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
+            <option value="Bottom_Mask" id="importBottomOption" data-i18n="layerBottom" hidden>Bottom Mask（透光）</option>
+          </select>
+        </label>
+        <div class="eda-import-actions">
+          <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnImportSelectedEda" disabled data-i18n="edaImportSelected">导入选定图纸</button></div>
+          <div class="btn-row centered"><button type="button" class="btn drawing-action-btn" id="btnImportAllEda" disabled data-i18n="edaImportAll">导入所有图纸</button></div>
+        </div>
       </div></div>
     </div>
   </div>
@@ -537,6 +568,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { exportDrawing:'导出全部图纸', expor
 Object.assign(TRANSLATIONS['zh-TW'], { exportDrawing:'匯出全部圖紙', exportLayerSelect:'選擇匯出層', exportSelectedLayer:'匯出單張圖紙' });
 Object.assign(TRANSLATIONS.en, { exportDrawing:'Export All Drawings', exportLayerSelect:'Layer to Export', exportSelectedLayer:'Export Selected Drawing' });
 Object.assign(TRANSLATIONS.ja, { exportDrawing:'すべての図面を書き出す', exportLayerSelect:'書き出すレイヤー', exportSelectedLayer:'選択した図面を書き出す' });
+Object.assign(TRANSLATIONS['zh-CN'], { edaImport:'导入到 EDA 中', edaCoordinateX:'X 坐标（mil）', edaCoordinateY:'Y 坐标（mil）', edaImportHint:'将在当前 PCB 中生成图元；坐标原点为 (0, 0)。', edaImportLayerSelect:'选择要导入的图纸', edaImportSelected:'导入选定图纸', edaImportAll:'导入所有图纸', edaImporting:'正在导入到 EDA…', edaImportSuccess:'已导入 {count} 张图纸到 EDA', edaImportNeedPcb:'请在嘉立创 EDA 的 PCB 编辑器中打开本插件', edaImportFailed:'导入到 EDA 失败：' });
+Object.assign(TRANSLATIONS['zh-TW'], { edaImport:'匯入到 EDA', edaCoordinateX:'X 座標（mil）', edaCoordinateY:'Y 座標（mil）', edaImportHint:'將在目前 PCB 中產生圖元；座標原點為 (0, 0)。', edaImportLayerSelect:'選擇要匯入的圖紙', edaImportSelected:'匯入選定圖紙', edaImportAll:'匯入所有圖紙', edaImporting:'正在匯入到 EDA…', edaImportSuccess:'已匯入 {count} 張圖紙到 EDA', edaImportNeedPcb:'請在嘉立創 EDA 的 PCB 編輯器中開啟本外掛', edaImportFailed:'匯入到 EDA 失敗：' });
+Object.assign(TRANSLATIONS.en, { edaImport:'Import into EDA', edaCoordinateX:'X coordinate (mil)', edaCoordinateY:'Y coordinate (mil)', edaImportHint:'Creates primitives in the current PCB; origin is (0, 0).', edaImportLayerSelect:'Drawing to import', edaImportSelected:'Import Selected Drawing', edaImportAll:'Import All Drawings', edaImporting:'Importing into EDA…', edaImportSuccess:'Imported {count} drawing(s) into EDA', edaImportNeedPcb:'Open this plugin from the JLCEDA PCB editor', edaImportFailed:'Failed to import into EDA: ' });
+Object.assign(TRANSLATIONS.ja, { edaImport:'EDA に取り込む', edaCoordinateX:'X 座標（mil）', edaCoordinateY:'Y 座標（mil）', edaImportHint:'現在の PCB に図形を作成します。原点は (0, 0) です。', edaImportLayerSelect:'取り込む図面を選択', edaImportSelected:'選択した図面を取り込む', edaImportAll:'すべての図面を取り込む', edaImporting:'EDA に取り込み中…', edaImportSuccess:'{count} 枚の図面を EDA に取り込みました', edaImportNeedPcb:'嘉立创 EDA の PCB エディターから本プラグインを開いてください', edaImportFailed:'EDA への取り込みに失敗しました：' });
 Object.assign(TRANSLATIONS['zh-CN'], { importDrawingReplace:'导入图纸并覆盖' });
 Object.assign(TRANSLATIONS['zh-TW'], { importDrawingReplace:'匯入圖紙並覆蓋' });
 Object.assign(TRANSLATIONS.en, { importDrawingReplace:'Import Drawing and Replace' });
@@ -1529,7 +1564,9 @@ function setProcessingMode(mode, shouldRender){
   // 灰度模式保留第四个预览格，但明确显示为无输出，避免布局跳变。
   el('#bottomPreviewItem').hidden = false;
   el('#exportBottomOption').hidden = isGray;
+  el('#importBottomOption').hidden = isGray;
   if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
+  if(isGray && el('#selectImportEdaLayer').value === 'Bottom_Mask') el('#selectImportEdaLayer').value = 'Top_Silk';
   syncQuadPrimaryLabel();
   const modeButtons = document.querySelectorAll('[data-processing-mode]');
   const nextButton = Array.from(modeButtons).find(btn => btn.dataset.processingMode === state.processingMode);
@@ -2496,6 +2533,31 @@ function layerToPngBlob(layer, forceOpaqueMono, addEdaImportProtection){
   c.getContext('2d').putImageData(new ImageData(d, w, h), 0, 0);
   return new Promise(res => c.toBlob(res, 'image/png'));
 }
+function cropLayerToVisibleContent(layer, foregroundMode){
+  const w = layer.width, h = layer.height, data = layer.data;
+  let left = w, top = h, right = -1, bottom = -1;
+  for(let y = 0; y < h; y++) for(let x = 0; x < w; x++){
+    const i = (y*w + x)*4;
+    // 灰度层以透明像素作为留白；彩色层是黑白不透明图，白色会被 EDA
+    // 当作背景，因此必须以黑色前景计算包围盒，不能使用 Alpha。
+    const isForeground = foregroundMode === 'black'
+      ? data[i+3] !== 0 && data[i] < 128 && data[i+1] < 128 && data[i+2] < 128
+      : data[i+3] !== 0;
+    if(!isForeground) continue;
+    if(x < left) left = x;
+    if(y < top) top = y;
+    if(x > right) right = x;
+    if(y > bottom) bottom = y;
+  }
+  if(right < left || bottom < top) return null;
+  const width = right - left + 1, height = bottom - top + 1;
+  const cropped = makeImg(width, height);
+  for(let y = 0; y < height; y++){
+    const from = ((top + y)*w + left)*4;
+    cropped.data.set(data.subarray(from, from + width*4), y*width*4);
+  }
+  return {layer:cropped, left, top};
+}
 function ledReferenceToPngBlob(width, height, strips){
   const c = document.createElement('canvas'); c.width = width; c.height = height;
   const ctx = c.getContext('2d');
@@ -2524,7 +2586,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 function setExportControlsEnabled(enabled){
   el('#btnExport').disabled = !enabled;
   el('#selectExportLayer').disabled = !enabled;
+  el('#selectImportEdaLayer').disabled = !enabled;
   el('#btnExportSelected').disabled = !enabled;
+  el('#btnImportSelectedEda').disabled = !enabled;
+  el('#btnImportAllEda').disabled = !enabled;
   el('#mExport').classList.toggle('disabled', !enabled);
 }
 function syncImportDrawingButton(){
@@ -2582,6 +2647,79 @@ async function exportSelectedLayer(){
   if(!settings || !key) return;
   toast(t('exporting'));
   if(await downloadLayerExport(key, settings)) toast(t('exportSuccess', {count:1}));
+}
+
+/* ---------------- 导入到嘉立创 EDA ---------------- */
+const EDA_IMPORT_LAYER_IDS = {
+  Top_Copper: 1,
+  Top_Silk: 3,
+  Top_Mask: 5,
+  Bottom_Mask: 6
+};
+function getEdaImportPosition(){
+  const x = Number(el('#inputEdaX').value), y = Number(el('#inputEdaY').value);
+  if(!Number.isFinite(x) || !Number.isFinite(y)) throw new Error('invalid-coordinate');
+  return {x, y};
+}
+function getEdaImportLayerKeys(settings){
+  return settings.grayscale
+    ? ['Top_Copper', 'Top_Mask', 'Top_Silk']
+    : ['Top_Copper', 'Top_Mask', 'Top_Silk', 'Bottom_Mask'];
+}
+async function importLayerToEda(key, position, settings){
+  const edaApi = globalThis.eda;
+  if(!edaApi || !edaApi.pcb_MathPolygon || !edaApi.pcb_PrimitiveImage) throw new Error('eda-api-unavailable');
+  const layer = state.layers && state.layers[key];
+  const layerId = EDA_IMPORT_LAYER_IDS[key];
+  if(!layer || !layerId) throw new Error('layer-unavailable');
+  // 灰度层以透明留白对齐；彩色层则以会被转换器保留的黑色前景对齐。
+  // create() 的 x/y 是图元实际包围盒的左上角。浏览器图像 Y 轴向下而
+  // PCB Y 轴向上，因此 Y 偏移必须相减，才能让各层共用原始画布坐标系。
+  const colorMode = !settings.grayscale;
+  const content = cropLayerToVisibleContent(layer, colorMode ? 'black' : 'alpha');
+  if(!content) throw new Error('empty-layer');
+  const imageBlob = await layerToPngBlob(content.layer, !settings.grayscale, false);
+  if(!imageBlob) throw new Error('png-create-failed');
+  const polygon = await edaApi.pcb_MathPolygon.convertImageToComplexPolygon(
+    imageBlob, content.layer.width, content.layer.height, 0.1, 0.1, 0, 0,
+    // 彩色识别层会导出不透明黑白图，白色是画布背景；若不声明，EDA 会把
+    // 整张白底也转换为图元，最终显示为大色块。灰度层保留透明背景与白色丝印。
+    colorMode, false
+  );
+  if(!polygon) throw new Error('image-convert-failed');
+  const primitive = await edaApi.pcb_PrimitiveImage.create(
+    position.x + content.left, position.y - content.top, polygon, layerId,
+    content.layer.width, content.layer.height, 0, false, false
+  );
+  if(!primitive) throw new Error('primitive-create-failed');
+}
+async function importLayersToEda(keys){
+  const settings = getExportSettings();
+  if(!settings || !keys.length) return;
+  let position;
+  try { position = getEdaImportPosition(); }
+  catch { toast(t('edaImportFailed') + t('invalidImageSize')); return; }
+  const buttons = [el('#btnImportSelectedEda'), el('#btnImportAllEda')];
+  buttons.forEach(button => { button.disabled = true; });
+  toast(t('edaImporting'));
+  try {
+    for(const key of keys) await importLayerToEda(key, position, settings);
+    toast(t('edaImportSuccess', {count:keys.length}));
+  } catch(error) {
+    const message = error && error.message;
+    toast(message === 'eda-api-unavailable' ? t('edaImportNeedPcb') : t('edaImportFailed') + (message || t('unknownError')));
+  } finally {
+    const enabled = !!state.origin;
+    buttons.forEach(button => { button.disabled = !enabled; });
+  }
+}
+function importSelectedLayerToEda(){
+  const key = el('#selectImportEdaLayer').value;
+  if(key) return importLayersToEda([key]);
+}
+function importAllLayersToEda(){
+  const settings = getExportSettings();
+  if(settings) return importLayersToEda(getEdaImportLayerKeys(settings));
 }
 
 /* ---------------- 工程保存 / 导入 ---------------- */
@@ -2964,6 +3102,8 @@ function setupMenus(){
   el('#mExport').onclick = exportLayers;
   el('#btnExport').onclick = exportLayers;
   el('#btnExportSelected').onclick = exportSelectedLayer;
+  el('#btnImportSelectedEda').onclick = importSelectedLayerToEda;
+  el('#btnImportAllEda').onclick = importAllLayersToEda;
   el('#mSave').onclick = saveProject;
   el('#mLoad').onclick = () => el('#projInput').click();
   el('#mPaint').onclick = openPaintEditor;
@@ -3149,6 +3289,12 @@ function init(){
   createSlider('sliderGrayThick', 'grayThick', 0, 12, GRAY_DEFAULTS.thickRadius, 0.2, v => { state.gray.thickRadius = v; });
   createSlider('sliderGrayBlur', 'grayBlur', 0, 8, GRAY_DEFAULTS.blurRadius, 0.1, v => { state.gray.blurRadius = v; });
 
+  // 将 EDA 导入区置于图纸操作区之前；默认展开 EDA 导入、收起图纸操作。
+  const actionsGroup = el('#groupActions'), edaImportGroup = el('#groupEdaImport');
+  actionsGroup.before(edaImportGroup);
+  setGroupOpen('groupActions', false, false);
+  setGroupOpen('groupEdaImport', true, false);
+
   // 折叠组标题点击
   document.querySelectorAll('.group>.group-header').forEach(h => {
     h.addEventListener('click', function(){
@@ -3196,6 +3342,13 @@ function init(){
   fi.type = 'file'; fi.accept = 'image/*'; fi.id = 'fileInput'; fi.style.display = 'none';
   fi.addEventListener('change', function(){ if(this.files[0]) loadImageFile(this.files[0]); this.value = ''; });
   document.body.appendChild(fi);
+  el('#compositeWrap').addEventListener('click', function(){
+    if(!state.origin) fi.click();
+  });
+  // 四分视图的四个预览格位于独立网格中，空状态下点击任意一格均可导入。
+  el('#quadGrid').addEventListener('click', function(){
+    if(!state.origin) fi.click();
+  });
 
   const pi = document.createElement('input');
   pi.type = 'file'; pi.accept = '.pcblg,.pcblg.json,.json'; pi.id = 'projInput'; pi.style.display = 'none';
