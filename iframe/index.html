@@ -227,6 +227,8 @@ button.drawing-action-btn.action-selected:hover{background:var(--control-accent)
 .layers-grid{
   flex:1 1 auto;display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));grid-template-rows:repeat(2, minmax(0, 1fr));gap:8px;min-height:0;
 }
+/* 四分视图已在主画布展示各生产层，右栏仅保留 EDA 导入操作。 */
+.layers-grid[hidden]{display:none;}
 /* 两种算法共用 2×2 预览格；灰度模式的第四格明确标为无输出。 */
 .layers-grid .lp[hidden]{display:none;}
 .layers-grid .lp{display:flex;flex-direction:column;min-width:0;min-height:0;}
@@ -409,7 +411,6 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
     <div class="menu" id="menuView">
       <button type="button" data-i18n="menuView">视图</button>
       <div class="dropdown">
-        <button type="button" data-view-mode="overlay" data-i18n="viewOverlay">叠加视图</button>
         <button type="button" data-view-mode="split" data-i18n="viewSplit">分隔视图</button>
         <button type="button" data-view-mode="quad" data-i18n="viewQuad">四分视图</button>
       </div>
@@ -436,8 +437,7 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
     <button type="button" class="toolbar-button" data-quick-action="paint" disabled data-i18n="toolbarEdit">快捷编辑</button>
   </div>
   <div class="toolbar-group">
-    <button type="button" class="toolbar-button active" data-quick-view="overlay" data-i18n="viewOverlay">叠加视图</button>
-    <button type="button" class="toolbar-button" data-quick-view="split" data-i18n="viewSplit">分隔视图</button>
+    <button type="button" class="toolbar-button active" data-quick-view="split" data-i18n="viewSplit">分隔视图</button>
     <button type="button" class="toolbar-button" data-quick-view="quad" data-i18n="viewQuad">四分视图</button>
   </div>
 </div>
@@ -452,10 +452,10 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
         <div class="placeholder" id="compositePlaceholder" data-i18n="importPlaceholder">请导入图片…</div>
       </div>
       <div class="quad-grid" id="quadGrid" hidden>
-        <div class="quad-cell"><div class="t" id="quadPrimaryTitle" data-i18n="viewOverlay">叠加视图</div><div class="w"><canvas id="canvasQuadPrimary"></canvas><div class="placeholder" data-quad-placeholder="primary" data-i18n="importPlaceholder">请导入图片…</div></div></div>
-        <div class="quad-cell"><div class="t" data-i18n="layerSilk">Top Silk（丝印）</div><div class="w"><canvas id="canvasQuadSilk"></canvas><div class="placeholder" data-quad-placeholder="silk" data-i18n="importPlaceholder">请导入图片…</div></div></div>
-        <div class="quad-cell"><div class="t" data-i18n="layerMask">Top Mask（阻焊）</div><div class="w"><canvas id="canvasQuadMask"></canvas><div class="placeholder" data-quad-placeholder="mask" data-i18n="importPlaceholder">请导入图片…</div></div></div>
-        <div class="quad-cell"><div class="t" data-i18n="layerCopper">Top Copper（线路）</div><div class="w"><canvas id="canvasQuadCopper"></canvas><div class="placeholder" data-quad-placeholder="copper" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" id="quadTopLeftTitle" data-i18n="quadComposite">叠加图</div><div class="w"><canvas id="canvasQuadCopper"></canvas><div class="placeholder" data-quad-placeholder="topLeft" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" id="quadTopRightTitle" data-i18n="layerCopper">Top Copper（线路）</div><div class="w"><canvas id="canvasQuadMask"></canvas><div class="placeholder" data-quad-placeholder="topRight" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" id="quadBottomLeftTitle" data-i18n="layerMask">Top Mask（阻焊）</div><div class="w"><canvas id="canvasQuadSilk"></canvas><div class="placeholder" data-quad-placeholder="bottomLeft" data-i18n="importPlaceholder">请导入图片…</div></div></div>
+        <div class="quad-cell"><div class="t" id="quadBottomRightTitle" data-i18n="layerSilk">Top Silk（丝印）</div><div class="w"><canvas id="canvasQuadBottom"></canvas><div class="placeholder" data-quad-placeholder="bottomRight" data-i18n="importPlaceholder">请导入图片…</div></div></div>
       </div>
     </div>
   </div>
@@ -588,7 +588,7 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
   </div>
 
   <div class="col-layers" id="colLayers" style="display:none">
-    <div class="layers-grid">
+    <div class="layers-grid" id="layersGrid">
       <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
       <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
@@ -648,6 +648,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { menuView:'视图', viewOverlay:'叠加视
 Object.assign(TRANSLATIONS['zh-TW'], { menuView:'檢視', viewOverlay:'疊加檢視', viewSplit:'分隔檢視', viewQuad:'四分檢視' });
 Object.assign(TRANSLATIONS.en, { menuView:'View', viewOverlay:'Overlay View', viewSplit:'Split View', viewQuad:'Quad View' });
 Object.assign(TRANSLATIONS.ja, { menuView:'表示', viewOverlay:'重ね合わせ表示', viewSplit:'分割表示', viewQuad:'4 分割表示' });
+Object.assign(TRANSLATIONS['zh-CN'], { quadComposite:'叠加图' });
+Object.assign(TRANSLATIONS['zh-TW'], { quadComposite:'疊加圖' });
+Object.assign(TRANSLATIONS.en, { quadComposite:'Composite' });
+Object.assign(TRANSLATIONS.ja, { quadComposite:'合成図' });
 Object.assign(TRANSLATIONS['zh-CN'], { exportDrawing:'导出全部图纸', exportLayerSelect:'选择导出层', exportSelectedLayer:'导出单张图纸' });
 Object.assign(TRANSLATIONS['zh-TW'], { exportDrawing:'匯出全部圖紙', exportLayerSelect:'選擇匯出層', exportSelectedLayer:'匯出單張圖紙' });
 Object.assign(TRANSLATIONS.en, { exportDrawing:'Export All Drawings', exportLayerSelect:'Layer to Export', exportSelectedLayer:'Export Selected Drawing' });
@@ -1320,7 +1324,7 @@ const state = {
   origin: null,          // 原图 ImageData
   originCanvas: null,    // 原图 canvas（导出/工程用）
   processingMode: 'gray', // color: 现有彩色识别；gray: 纯灰度三分
-  viewMode: 'overlay',   // 仅控制预览布局，不影响分层、导出或工程数据
+  viewMode: 'split',     // 仅控制预览布局，不影响分层、导出或工程数据
   gray: { ...GRAY_DEFAULTS },
   generation: 0,
   fullResGeneration: -1,
@@ -1666,13 +1670,13 @@ function setProcessingMode(mode, shouldRender){
   if(isGray) state.light.pendingStart = null;
   el('#colorControls').hidden = isGray;
   el('#grayControls').hidden = !isGray;
-  // 灰度模式保留第四个预览格，但明确显示为无输出，避免布局跳变。
+  // 灰度模式保留右栏的透光层预览，但明确显示为无输出。
   el('#bottomPreviewItem').hidden = false;
   el('#exportBottomOption').hidden = isGray;
   el('#importBottomOption').hidden = isGray;
   if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
   if(isGray && el('#selectImportEdaLayer').value === 'Bottom_Mask') el('#selectImportEdaLayer').value = 'Top_Silk';
-  syncQuadPrimaryLabel();
+  syncQuadLabels();
   const modeButtons = document.querySelectorAll('[data-processing-mode]');
   const nextButton = Array.from(modeButtons).find(btn => btn.dataset.processingMode === state.processingMode);
   if(shouldRender && nextButton) transitionSegmentedSelection(modeButtons, nextButton);
@@ -1682,11 +1686,13 @@ function setProcessingMode(mode, shouldRender){
 }
 
 function setViewMode(mode){
-  state.viewMode = ['overlay', 'split', 'quad'].includes(mode) ? mode : 'overlay';
+  state.viewMode = ['split', 'quad'].includes(mode) ? mode : 'split';
   const isQuad = state.viewMode === 'quad';
   el('#compositeWrap').hidden = isQuad;
   el('#quadGrid').hidden = !isQuad;
-  el('#colLayers').style.display = (currentUiTheme === 'eda' || state.viewMode === 'split') ? 'flex' : 'none';
+  // 右栏始终保留 EDA 导入操作；四分视图不重复显示生产层缩略图。
+  el('#colLayers').style.display = 'flex';
+  el('#layersGrid').hidden = isQuad;
   document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
   document.querySelectorAll('[data-quick-view]').forEach(btn => btn.classList.toggle('active', btn.dataset.quickView === state.viewMode));
   updateQuadPlaceholders();
@@ -1713,21 +1719,27 @@ const previewStates = {
   bottom:    { canvas:'#canvasBottom',   img:null, srcCanvas:null, zoom:1, pan:{x:0,y:0} }
 };
 const quadPreviewCanvases = {
-  primary:'#canvasQuadPrimary', silk:'#canvasQuadSilk', mask:'#canvasQuadMask', copper:'#canvasQuadCopper'
+  topLeft:'#canvasQuadCopper', topRight:'#canvasQuadMask', bottomLeft:'#canvasQuadSilk', bottomRight:'#canvasQuadBottom'
 };
 // 四分视图共享相机，保证任意窗口操作后四张图保持同一观察位置。
 const quadCamera = { zoom:1, pan:{x:0,y:0} };
 // 分隔视图也复用同一相机，使主预览与三个生产层始终同步。
 const splitCamera = { zoom:1, pan:{x:0,y:0} };
 
-function quadPreviewKey(key){
-  return key === 'primary' ? (state.processingMode === 'color' ? 'bottom' : 'composite') : key;
+function quadPreviewKey(position){
+  const grayKeys = { topLeft:'composite', topRight:'copper', bottomLeft:'mask', bottomRight:'silk' };
+  const colorKeys = { topLeft:'copper', topRight:'mask', bottomLeft:'silk', bottomRight:'bottom' };
+  return (state.processingMode === 'gray' ? grayKeys : colorKeys)[position];
 }
-function syncQuadPrimaryLabel(){
-  const title = el('#quadPrimaryTitle');
-  if(!title) return;
-  title.dataset.i18n = state.processingMode === 'color' ? 'layerBottom' : 'viewOverlay';
-  title.textContent = t(title.dataset.i18n);
+function syncQuadLabels(){
+  const labelKeys = state.processingMode === 'gray'
+    ? { quadTopLeftTitle:'quadComposite', quadTopRightTitle:'layerCopper', quadBottomLeftTitle:'layerMask', quadBottomRightTitle:'layerSilk' }
+    : { quadTopLeftTitle:'layerCopper', quadTopRightTitle:'layerMask', quadBottomLeftTitle:'layerSilk', quadBottomRightTitle:'layerBottom' };
+  for(const id in labelKeys){
+    const title = el('#' + id);
+    title.dataset.i18n = labelKeys[id];
+    title.textContent = t(labelKeys[id]);
+  }
 }
 
 function syncPreviewImageMeta(){
@@ -1741,7 +1753,7 @@ function syncPreviewImageMeta(){
   const pixels = new Intl.NumberFormat(document.documentElement.lang || currentLanguage).format(state.origin.width * state.origin.height);
   const text = t('previewImageMeta', { pixels, width:state.origin.width, height:state.origin.height, zoom:Math.round(zoom * 100) });
   mainMeta.textContent = text;
-  // 元信息保持在网格外，避免四分视图只有叠加格被额外文本压缩。
+  // 元信息保持在网格外，避免四分视图的叠加格被额外文本压缩。
   mainMeta.hidden = false;
 }
 
@@ -1751,7 +1763,27 @@ function calcPreviewRect(labelW, labelH, imgW, imgH, zoom, pan){
   const dw = imgW*fit*zoom, dh = imgH*fit*zoom;
   return { x:(labelW-dw)*0.5 + pan.x, y:(labelH-dh)*0.5 + pan.y, w:dw, h:dh };
 }
+function previewFit(st, canvasEl){
+  if(!st.img || canvasEl.width <= 0 || canvasEl.height <= 0) return 1;
+  return Math.min(canvasEl.width/st.img.width, canvasEl.height/st.img.height);
+}
+function splitViewForCanvas(st, canvasEl){
+  const scale = previewFit(st, canvasEl) * splitCamera.zoom;
+  return { zoom:splitCamera.zoom, pan:{ x:splitCamera.pan.x * scale, y:splitCamera.pan.y * scale }, unbounded:true };
+}
+function zoomSplitCameraAt(st, canvasEl, x, y, zoom){
+  const oldScale = previewFit(st, canvasEl) * splitCamera.zoom;
+  const oldWidth = st.img.width * oldScale, oldHeight = st.img.height * oldScale;
+  const sourceX = (x - (canvasEl.width-oldWidth)*0.5) / oldScale - splitCamera.pan.x;
+  const sourceY = (y - (canvasEl.height-oldHeight)*0.5) / oldScale - splitCamera.pan.y;
+  splitCamera.zoom = zoom;
+  const nextScale = previewFit(st, canvasEl) * splitCamera.zoom;
+  const nextWidth = st.img.width * nextScale, nextHeight = st.img.height * nextScale;
+  splitCamera.pan.x = (x - (canvasEl.width-nextWidth)*0.5) / nextScale - sourceX;
+  splitCamera.pan.y = (y - (canvasEl.height-nextHeight)*0.5) / nextScale - sourceY;
+}
 function clampPanForImage(view, img, cw, ch){
+  if(view.unbounded) return;
   if(!img) { view.pan = {x:0,y:0}; return; }
   const r = calcPreviewRect(cw, ch, img.width, img.height, view.zoom, {x:0,y:0});
   const maxX = Math.max(0, (r.w - cw)*0.5), maxY = Math.max(0, (r.h - ch)*0.5);
@@ -1806,14 +1838,15 @@ function refreshPreviews(){
 }
 function updateQuadPlaceholders(){
   document.querySelectorAll('[data-quad-placeholder]').forEach(node => {
-    node.style.display = previewStates[quadPreviewKey(node.dataset.quadPlaceholder)].img ? 'none' : 'flex';
+    const previewKey = quadPreviewKey(node.dataset.quadPlaceholder);
+    node.style.display = previewStates[previewKey].img ? 'none' : 'flex';
   });
 }
 function renderAllPreviews(){
   for(const k in previewStates){
     const st = previewStates[k];
     const c = el(st.canvas);
-    const view = state.viewMode === 'split' ? splitCamera : st;
+    const view = state.viewMode === 'split' ? splitViewForCanvas(st, c) : st;
     if(c.width > 0 && c.height > 0) renderPreviewCanvas(st, c, view, k === 'composite');
   }
   if(state.viewMode === 'quad'){
@@ -1863,14 +1896,20 @@ function attachPreviewInteraction(key){
   c.addEventListener('wheel', function(e){
     e.preventDefault();
     if(!st.img) return;
-    const view = state.viewMode === 'split' ? splitCamera : st;
     // 与 Windows 图片查看器一致：滚轮向上放大，向下缩小。
     const factor = Math.pow(1.12, -e.deltaY/120);
-    const oldZoom = view.zoom;
+    const oldZoom = state.viewMode === 'split' ? splitCamera.zoom : st.zoom;
     const newZoom = clamp(oldZoom*factor, 0.2, 8.0);
     if(Math.abs(newZoom-oldZoom) < 1e-6) return;
     const r = c.getBoundingClientRect();
     const cx = e.clientX - r.left, cy = e.clientY - r.top;
+    if(state.viewMode === 'split'){
+      zoomSplitCameraAt(st, c, cx, cy, newZoom);
+      syncPreviewImageMeta();
+      renderAllPreviews();
+      return;
+    }
+    const view = st;
     const oldRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, oldZoom, view.pan);
     view.zoom = newZoom;
     if(cx >= oldRect.x && cx <= oldRect.x+oldRect.w && cy >= oldRect.y && cy <= oldRect.y+oldRect.h){
@@ -1896,11 +1935,15 @@ function attachPreviewInteraction(key){
     if(!panning) return;
     const dx = e.clientX - lastX, dy = e.clientY - lastY;
     lastX = e.clientX; lastY = e.clientY;
-    const view = state.viewMode === 'split' ? splitCamera : st;
-    view.pan.x += dx; view.pan.y += dy;
-    clampPanForImage(view, st.img, c.width, c.height);
-    if(state.viewMode === 'split') renderAllPreviews();
-    else renderPreviewCanvas(st, c, st, key === 'composite');
+    if(state.viewMode === 'split'){
+      const scale = previewFit(st, c) * splitCamera.zoom;
+      splitCamera.pan.x += dx / scale; splitCamera.pan.y += dy / scale;
+      renderAllPreviews();
+    } else {
+      st.pan.x += dx; st.pan.y += dy;
+      clampPanForImage(st, st.img, c.width, c.height);
+      renderPreviewCanvas(st, c, st, key === 'composite');
+    }
   });
   window.addEventListener('pointerup', function(e){
     if(panning){ panning = false; c.style.cursor = 'default'; }
@@ -1954,7 +1997,7 @@ function attachLightPlacement(canvasSelector, isQuadCanvas){
     if(e.button !== 0 || state.processingMode !== 'color' || !masterState.light || !state.origin) return;
     const st = previewStates.composite;
     if(!st.img) return;
-    const view = isQuadCanvas ? quadCamera : (state.viewMode === 'split' ? splitCamera : st);
+    const view = isQuadCanvas ? quadCamera : (state.viewMode === 'split' ? splitViewForCanvas(st, canvas) : st);
     const bounds = canvas.getBoundingClientRect();
     const x = (e.clientX-bounds.left)*canvas.width/bounds.width, y = (e.clientY-bounds.top)*canvas.height/bounds.height;
     const rect = calcPreviewRect(canvas.width, canvas.height, st.img.width, st.img.height, view.zoom, view.pan);
@@ -3417,10 +3460,10 @@ function init(){
   createSlider('sliderGrayThick', 'grayThick', 0, 12, GRAY_DEFAULTS.thickRadius, 0.2, v => { state.gray.thickRadius = v; });
   createSlider('sliderGrayBlur', 'grayBlur', 0, 8, GRAY_DEFAULTS.blurRadius, 0.1, v => { state.gray.blurRadius = v; });
 
-  // 将 EDA 导入区置于图纸操作区之前；默认展开 EDA 导入、收起图纸操作。
+  // 将 EDA 导入区置于图纸操作区之前；默认展开两组常用操作。
   const actionsGroup = el('#groupActions'), edaImportGroup = el('#groupEdaImport');
   actionsGroup.before(edaImportGroup);
-  setGroupOpen('groupActions', false, false);
+  setGroupOpen('groupActions', true, false);
   setGroupOpen('groupEdaImport', true, false);
 
   // 折叠组标题点击
@@ -3487,7 +3530,7 @@ function init(){
 
   setupMenus();
   loadLocalPrefs();
-  setViewMode('overlay');
+  setViewMode('split');
   syncEdgeUI();
   resizeCanvases();
   window.addEventListener('resize', resizeCanvases);
