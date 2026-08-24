@@ -1,4 +1,4 @@
-<h1 align="center">PCB_lightgraph Extension</h1>
+<h1 align="center">PCB_lightgraph_Extension</h1>
 
 <p align="center">
   <img alt="Language" src="https://img.shields.io/badge/Language-TypeScript%20%2F%20JavaScript-3178C6?logo=typescript&logoColor=white">
@@ -9,9 +9,10 @@
 </p>
 
 <p align="center">
-  <strong>PCB_lightgraph Extension</strong> 是运行在嘉立创 EDA 专业版中的 PCB 图片分层工具。
+  <strong>PCB_lightgraph_Extension</strong> 直接将软件内置在嘉立创 EDA 专业版
   <br>
-  将 2D 插画转换为可用于 PCB 制作的铜层、阻焊层、丝印层等图纸，并可直接导入当前 PCB。
+  直接下载并导入插件扩展包至EDA专业版<br>
+  即可<strong> 跳过原软件导出再导入图片 </strong>的中间流程！
 </p>
 
 ## 界面&完整功能
@@ -47,7 +48,7 @@
 
 ## 功能说明
 
-具体功能和 [PCB_lightgraph_Portable](https://github.com/Ashlixy17/PCB_lightgraph_Portable) 完全相同，具体功能可以看 [README](https://github.com/Ashlixy17/PCB_lightgraph_Portable/blob/main/README.md)
+具体功能和 [PCB_lightgraph_Portable](https://github.com/Ashlixy17/PCB_lightgraph_Portable) 完全相同，具体功能可以看 [README](https://github.com/Ashlixy17/PCB_lightgraph_Portable/blob/main/README.md) 中的解释。
 
 
 
@@ -71,7 +72,7 @@
 [[QQ] 雷霆 PCB 的雷霆大群-1](https://qm.qq.com/q/v7i4PKNlzW)<br>
 [[QQ] 雷霆 PCB 的雷霆大群-2](https://qm.qq.com/q/pVp5vf3RLi)
 > [!TIP]
-> 遇到问题、有新想法或愿意参与改进，欢迎 [提交Issue](https://github.com/G100wasd/PCB_lightgraph_Extension/issues) 或 Pull Request。
+> 遇到问题、有新想法或愿意参与改进，欢迎 [提交Issue](https://github.com/G100wasd/PCB_lightgraph_Extension/issues) 反馈。
 ### 如果觉得项目对你有帮助，请给此项目和原软件点一个 Star 吧！(ﾉ>ω<)ﾉ
 
 ## 声明
