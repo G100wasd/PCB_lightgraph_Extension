@@ -72,8 +72,8 @@ body{
   .topbar{flex-wrap:wrap;}
   .menubar{flex-wrap:wrap;}
   .star-link{position:static;transform:none;order:3;flex:0 0 100%;text-align:center;}
-  /* EDA 工具按钮与求 Star 文本保持同一顶栏，窄窗口可横向查看。 */
-  body[data-ui-theme="eda"] .topbar{flex-wrap:nowrap;overflow-x:auto;}
+  /* 下拉菜单必须能越过顶栏显示；滚动容器会裁剪菜单并出现多余滚动条。 */
+  body[data-ui-theme="eda"] .topbar{flex-wrap:nowrap;overflow:visible;z-index:101;}
   body[data-ui-theme="eda"] .menubar{flex-wrap:nowrap;flex:0 0 auto;}
   body[data-ui-theme="eda"] .eda-toolbar{flex:0 0 auto;}
 }
@@ -264,7 +264,7 @@ body[data-ui-theme="eda"]{
   --control-accent:#2589e8;--control-accent-text:#fff;--radius:2px;
   background:#2b2b2b;
 }
-body[data-ui-theme="eda"] .topbar{min-height:34px;padding:0 10px;gap:4px;background:#383838;border-bottom-color:#222;}
+body[data-ui-theme="eda"] .topbar{min-height:34px;padding:0 10px;gap:4px;background:#383838;border-bottom-color:#222;z-index:101;}
 body[data-ui-theme="eda"] .brand{font-size:12px;margin-right:10px;}
 body[data-ui-theme="eda"] .brand-badge{background:#565656;color:#d7d7d7;border-radius:1px;padding:1px 4px;}
 body[data-ui-theme="eda"] .menubar{gap:0;}
@@ -382,15 +382,6 @@ body[data-ui-theme="eda"] #toast{border-radius:1px;background:#414141;border-col
           <div class="dropdown" id="uiThemeMenu">
             <button type="button" data-ui-theme-choice="portable" data-i18n="uiThemePortable">便捷版 UI</button>
             <button type="button" data-ui-theme-choice="eda" data-i18n="uiThemeEda">EDA 界面 UI</button>
-          </div>
-        </div>
-        <div class="submenu" id="subLanguage">
-          <button type="button" data-i18n="languageMenu">语言 ▸</button>
-          <div class="dropdown" id="languageMenu">
-            <button type="button" data-language="zh-CN">简体中文</button>
-            <button type="button" data-language="zh-TW">繁體中文</button>
-            <button type="button" data-language="en">English</button>
-            <button type="button" data-language="ja">日本語</button>
           </div>
         </div>
         <label class="menu-check"><span data-i18n="edaImportProtection">EDA导入保护</span><input type="checkbox" id="chkEdaImportProtection" checked></label>
@@ -533,11 +524,11 @@ body[data-ui-theme="eda"] #toast{border-radius:1px;background:#414141;border-col
     <div class="group open" id="groupEdaImport">
       <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edaImport">导出至 EDA</span></button>
       <div class="content"><div class="inner">
-        <div class="btn-row eda-import-position">
-          <label class="ctl flex-fill"><span class="lab" data-i18n="edaCoordinateX">X 坐标（mil）</span><input id="inputEdaX" type="number" value="0" step="1"></label>
-          <label class="ctl flex-fill"><span class="lab" data-i18n="edaCoordinateY">Y 坐标（mil）</span><input id="inputEdaY" type="number" value="0" step="1"></label>
+        <div class="mode-switch eda-import-position" role="group" aria-label="导出位置" data-i18n-aria="edaExportPosition">
+          <button type="button" class="active" data-eda-export-position="origin" data-i18n="edaExportOrigin">导出至原点位置</button>
+          <button type="button" data-eda-export-position="mouse" data-i18n="edaExportMouse">导出至鼠标位置</button>
         </div>
-        <p class="note" data-i18n="edaImportHint">将在当前 PCB 中生成图元；坐标原点为 (0, 0)。</p>
+        <p class="note" id="edaExportPositionHint" data-i18n="edaExportOriginHint">将在当前 PCB 的 (0, 0) 位置生成图元。</p>
         <label class="ctl eda-import-select"><span class="lab" data-i18n="edaImportLayerSelect">选择要导入的图纸</span>
           <select id="selectImportEdaLayer" disabled>
             <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
@@ -618,10 +609,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { edaImport:'导入到 EDA 中', edaCoordin
 Object.assign(TRANSLATIONS['zh-TW'], { edaImport:'匯入到 EDA', edaCoordinateX:'X 座標（mil）', edaCoordinateY:'Y 座標（mil）', edaImportHint:'將在目前 PCB 中產生圖元；座標原點為 (0, 0)。', edaImportLayerSelect:'選擇要匯入的圖紙', edaImportSelected:'匯入選定圖紙', edaImportAll:'匯入所有圖紙', edaImporting:'正在匯入到 EDA…', edaImportSuccess:'已匯入 {count} 張圖紙到 EDA', edaImportNeedPcb:'請在嘉立創 EDA 的 PCB 編輯器中開啟本外掛', edaImportFailed:'匯入到 EDA 失敗：' });
 Object.assign(TRANSLATIONS.en, { edaImport:'Import into EDA', edaCoordinateX:'X coordinate (mil)', edaCoordinateY:'Y coordinate (mil)', edaImportHint:'Creates primitives in the current PCB; origin is (0, 0).', edaImportLayerSelect:'Drawing to import', edaImportSelected:'Import Selected Drawing', edaImportAll:'Import All Drawings', edaImporting:'Importing into EDA…', edaImportSuccess:'Imported {count} drawing(s) into EDA', edaImportNeedPcb:'Open this plugin from the JLCEDA PCB editor', edaImportFailed:'Failed to import into EDA: ' });
 Object.assign(TRANSLATIONS.ja, { edaImport:'EDA に取り込む', edaCoordinateX:'X 座標（mil）', edaCoordinateY:'Y 座標（mil）', edaImportHint:'現在の PCB に図形を作成します。原点は (0, 0) です。', edaImportLayerSelect:'取り込む図面を選択', edaImportSelected:'選択した図面を取り込む', edaImportAll:'すべての図面を取り込む', edaImporting:'EDA に取り込み中…', edaImportSuccess:'{count} 枚の図面を EDA に取り込みました', edaImportNeedPcb:'嘉立创 EDA の PCB エディターから本プラグインを開いてください', edaImportFailed:'EDA への取り込みに失敗しました：' });
-Object.assign(TRANSLATIONS['zh-CN'], { edaImport:'导出至 EDA', edaImportLayerSelect:'选择要导出的图纸', edaImportSelected:'导出选定图纸', edaImportAll:'导出所有图纸', edaImporting:'正在导出至 EDA…', edaImportSuccess:'已导出 {count} 张图纸至 EDA', edaImportFailed:'导出至 EDA 失败：' });
-Object.assign(TRANSLATIONS['zh-TW'], { edaImport:'匯出至 EDA', edaImportLayerSelect:'選擇要匯出的圖紙', edaImportSelected:'匯出選定圖紙', edaImportAll:'匯出所有圖紙', edaImporting:'正在匯出至 EDA…', edaImportSuccess:'已匯出 {count} 張圖紙至 EDA', edaImportFailed:'匯出至 EDA 失敗：' });
-Object.assign(TRANSLATIONS.en, { edaImport:'Export to EDA', edaImportLayerSelect:'Drawing to export', edaImportSelected:'Export Selected Drawing', edaImportAll:'Export All Drawings', edaImporting:'Exporting to EDA…', edaImportSuccess:'Exported {count} drawing(s) to EDA', edaImportFailed:'Export to EDA failed: ' });
-Object.assign(TRANSLATIONS.ja, { edaImport:'EDA へ出力', edaImportLayerSelect:'出力する図面を選択', edaImportSelected:'選択した図面を出力', edaImportAll:'すべての図面を出力', edaImporting:'EDA へ出力中…', edaImportSuccess:'{count} 枚の図面を EDA へ出力しました', edaImportFailed:'EDA への出力に失敗しました：' });
+Object.assign(TRANSLATIONS['zh-CN'], { edaImport:'导出至 EDA', edaExportPosition:'导出位置', edaExportOrigin:'导出至原点位置', edaExportMouse:'导出至鼠标位置', edaExportOriginHint:'将在当前 PCB 的 (0, 0) 位置生成图元。', edaExportMouseHint:'选择后进入等待状态；在 PCB 画布左键点击后，才会在点击位置生成图元。', edaImportFollowMouse:'请在 PCB 画布中左键点击，将在点击位置生成图元。', edaImportLayerSelect:'选择要导出的图纸', edaImportSelected:'导出选定图纸', edaImportAll:'导出所有图纸', edaImporting:'正在导出至 EDA…', edaImportSuccess:'已导出 {count} 张图纸至 EDA', edaImportFailed:'导出至 EDA 失败：' });
+Object.assign(TRANSLATIONS['zh-TW'], { edaImport:'匯出至 EDA', edaExportPosition:'匯出位置', edaExportOrigin:'匯出至原點位置', edaExportMouse:'匯出至滑鼠位置', edaExportOriginHint:'將在目前 PCB 的 (0, 0) 位置產生圖元。', edaExportMouseHint:'選擇後進入等待狀態；在 PCB 畫布按一下左鍵後，才會在點擊位置產生圖元。', edaImportFollowMouse:'請在 PCB 畫布按一下左鍵，將在點擊位置產生圖元。', edaImportLayerSelect:'選擇要匯出的圖紙', edaImportSelected:'匯出選定圖紙', edaImportAll:'匯出所有圖紙', edaImporting:'正在匯出至 EDA…', edaImportSuccess:'已匯出 {count} 張圖紙至 EDA', edaImportFailed:'匯出至 EDA 失敗：' });
+Object.assign(TRANSLATIONS.en, { edaImport:'Export to EDA', edaExportPosition:'Export position', edaExportOrigin:'Export to origin', edaExportMouse:'Export to mouse', edaExportOriginHint:'Creates primitives at (0, 0) in the current PCB.', edaExportMouseHint:'After selecting this mode, click the PCB canvas to create primitives at the clicked position.', edaImportFollowMouse:'Left-click the PCB canvas to create primitives at the clicked position.', edaImportLayerSelect:'Drawing to export', edaImportSelected:'Export Selected Drawing', edaImportAll:'Export All Drawings', edaImporting:'Exporting to EDA…', edaImportSuccess:'Exported {count} drawing(s) to EDA', edaImportFailed:'Export to EDA failed: ' });
+Object.assign(TRANSLATIONS.ja, { edaImport:'EDA へ出力', edaExportPosition:'出力位置', edaExportOrigin:'原点に出力', edaExportMouse:'マウス位置に出力', edaExportOriginHint:'現在の PCB の (0, 0) に図元を作成します。', edaExportMouseHint:'選択後は待機状態になり、PCB 画面を左クリックした位置に図元を作成します。', edaImportFollowMouse:'PCB 画面を左クリックすると、その位置に図元を作成します。', edaImportLayerSelect:'出力する図面を選択', edaImportSelected:'選択した図面を出力', edaImportAll:'すべての図面を出力', edaImporting:'EDA へ出力中…', edaImportSuccess:'{count} 枚の図面を EDA へ出力しました', edaImportFailed:'EDA への出力に失敗しました：' });
 Object.assign(TRANSLATIONS['zh-CN'], { importDrawingReplace:'导入图纸并覆盖' });
 Object.assign(TRANSLATIONS['zh-TW'], { importDrawingReplace:'匯入圖紙並覆蓋' });
 Object.assign(TRANSLATIONS.en, { importDrawingReplace:'Import Drawing and Replace' });
@@ -668,12 +659,13 @@ Object.assign(TRANSLATIONS['zh-TW'], { toolbarExportProject:'匯出工程' });
 Object.assign(TRANSLATIONS.en, { toolbarExportProject:'Export Project' });
 Object.assign(TRANSLATIONS.ja, { toolbarExportProject:'プロジェクトを書き出す' });
 const PRODUCT_NAME = 'PCB_lightgraph Extension';
-const APP_VERSION = 'v0.1.0';
+const APP_VERSION = 'v0.1.1';
 const GITHUB_REPOSITORY = 'G100wasd/PCB_lightgraph_Extension';
 const GITHUB_RELEASES_URL = 'https://github.com/' + GITHUB_REPOSITORY + '/releases';
 const GITHUB_LATEST_RELEASE_API = 'https://api.github.com/repos/' + GITHUB_REPOSITORY + '/releases/latest';
 let currentLanguage = 'zh-CN';
 let currentUiTheme = 'eda';
+let edaLanguageListenerRegistered = false;
 function t(key, values){
   let text = (TRANSLATIONS[currentLanguage] && TRANSLATIONS[currentLanguage][key]) || TRANSLATIONS['zh-CN'][key] || key;
   if(values) for(const name in values) text = text.replaceAll('{'+name+'}', String(values[name]));
@@ -694,15 +686,33 @@ function applyTranslations(){
   document.querySelectorAll('[data-i18n-aria]').forEach(node => { node.setAttribute('aria-label', t(node.dataset.i18nAria)); });
   document.querySelectorAll('[data-i18n-title]').forEach(node => { node.title = t(node.dataset.i18nTitle); });
   document.querySelectorAll('.lab[data-i18n-slider]').forEach(label => refreshSliderLabel(label, label.parentElement.querySelector('input')));
-  document.querySelectorAll('[data-language]').forEach(button => button.classList.toggle('active', button.dataset.language === currentLanguage));
   document.querySelectorAll('[data-ui-theme-choice]').forEach(button => button.classList.toggle('active', button.dataset.uiThemeChoice === currentUiTheme));
+  syncEdaExportPositionUi();
   syncImportDrawingButton();
   syncPreviewImageMeta();
 }
-function setLanguage(language, persist){
-  currentLanguage = TRANSLATIONS[language] ? language : 'zh-CN';
-  if(persist) localStorage.setItem('pcblg_language', currentLanguage);
+function setLanguage(language){
+  currentLanguage = language === 'en' ? 'en' : 'zh-CN';
   applyTranslations();
+}
+function languageFromEda(language){
+  return String(language || '').toLowerCase().startsWith('en') ? 'en' : 'zh-CN';
+}
+async function syncLanguageWithEda(){
+  const i18n = globalThis.eda && globalThis.eda.sys_I18n;
+  if(!i18n || typeof i18n.getCurrentLanguage !== 'function'){
+    setLanguage('zh-CN');
+    return;
+  }
+  try {
+    setLanguage(languageFromEda(await i18n.getCurrentLanguage()));
+    if(!edaLanguageListenerRegistered && typeof i18n.addLanguageChangedEventListener === 'function'){
+      i18n.addLanguageChangedEventListener('pcblg-eda-language', language => setLanguage(languageFromEda(language)), false);
+      edaLanguageListenerRegistered = true;
+    }
+  } catch(_) {
+    setLanguage('zh-CN');
+  }
 }
 function syncUiThemeLayout(){
   const edaImportGroup = el('#groupEdaImport');
@@ -1302,7 +1312,7 @@ const state = {
   light: { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null }
 };
 // 导出兼容性属于本机偏好；默认开启以兼容会误判空白 PNG 的 EDA 软件。
-const exportCompatibility = { edaImportProtection:true };
+const exportCompatibility = { edaImportProtection:true, edaExportPosition:'origin' };
 
 const prc = {
   sourceSize: {w:0, h:0},
@@ -2783,18 +2793,15 @@ async function exportSelectedLayer(){
   if(await downloadLayerExport(key, settings)) toast(t('exportSuccess', {count:1}));
 }
 
-/* ---------------- 导入到嘉立创 EDA ---------------- */
+/* ---------------- 导出至嘉立创 EDA ---------------- */
 const EDA_IMPORT_LAYER_IDS = {
   Top_Copper: 1,
   Top_Silk: 3,
   Top_Mask: 5,
   Bottom_Mask: 6
 };
-function getEdaImportPosition(){
-  const x = Number(el('#inputEdaX').value), y = Number(el('#inputEdaY').value);
-  if(!Number.isFinite(x) || !Number.isFinite(y)) throw new Error('invalid-coordinate');
-  return {x, y};
-}
+const EDA_MOUSE_PLACEMENT_LISTENER_ID = 'pcblg-eda-image-placement';
+let edaMousePlacement = null;
 function getEdaImportLayerKeys(settings){
   return settings.grayscale
     ? ['Top_Copper', 'Top_Mask', 'Top_Silk']
@@ -2826,25 +2833,72 @@ async function importLayerToEda(key, position, settings){
     content.layer.width, content.layer.height, 0, false, false
   );
   if(!primitive) throw new Error('primitive-create-failed');
+  return { primitive, offsetX:content.left, offsetY:-content.top };
+}
+function setEdaImportButtonsDisabled(disabled){
+  [el('#btnImportSelectedEda'), el('#btnImportAllEda')].forEach(button => {
+    if(button) button.disabled = disabled;
+  });
+}
+function removeEdaMousePlacementListener(edaApi){
+  try { edaApi.pcb_Event.removeEventListener(EDA_MOUSE_PLACEMENT_LISTENER_ID); } catch(_) {}
+}
+async function finishEdaMousePlacement(placement){
+  if(edaMousePlacement !== placement || placement.finishing) return;
+  placement.finishing = true;
+  let keepWaiting = false;
+  try {
+    const position = await placement.edaApi.pcb_SelectControl.getCurrentMousePosition();
+    if(!position){
+      // 仅在 PCB 画布上的左键落点创建图元；画布外事件继续等待。
+      keepWaiting = true;
+      toast(t('edaImportFollowMouse'));
+      return;
+    }
+    for(const key of placement.keys) await importLayerToEda(key, position, placement.settings);
+    toast(t('edaImportSuccess', {count:placement.keys.length}));
+  } catch(error) {
+    const message = error && error.message;
+    toast(t('edaImportFailed') + (message || t('unknownError')));
+  } finally {
+    if(keepWaiting){
+      placement.finishing = false;
+      return;
+    }
+    removeEdaMousePlacementListener(placement.edaApi);
+    if(edaMousePlacement === placement) edaMousePlacement = null;
+    setEdaImportButtonsDisabled(!state.origin);
+  }
+}
+async function startEdaMousePlacement(keys, settings){
+  const edaApi = globalThis.eda;
+  if(!edaApi || !edaApi.pcb_Event || !edaApi.pcb_SelectControl || !edaApi.pcb_PrimitiveImage) throw new Error('eda-api-unavailable');
+  if(edaMousePlacement) throw new Error('placement-in-progress');
+  // 鼠标模式只记录待导出的图纸；收到 PCB 画布左键选中事件后才创建图元。
+  const placement = { edaApi, keys, settings, finishing:false };
+  edaMousePlacement = placement;
+  edaApi.pcb_Event.addMouseEventListener(EDA_MOUSE_PLACEMENT_LISTENER_ID, 'selected', () => finishEdaMousePlacement(placement), false);
+  toast(t('edaImportFollowMouse'));
 }
 async function importLayersToEda(keys){
   const settings = getExportSettings();
   if(!settings || !keys.length) return;
-  let position;
-  try { position = getEdaImportPosition(); }
-  catch { toast(t('edaImportFailed') + t('invalidImageSize')); return; }
-  const buttons = [el('#btnImportSelectedEda'), el('#btnImportAllEda')];
-  buttons.forEach(button => { button.disabled = true; });
+  if(edaMousePlacement){ toast(t('edaImportFollowMouse')); return; }
+  const mousePositionMode = exportCompatibility.edaExportPosition === 'mouse';
+  setEdaImportButtonsDisabled(true);
   toast(t('edaImporting'));
   try {
-    for(const key of keys) await importLayerToEda(key, position, settings);
+    if(mousePositionMode){
+      await startEdaMousePlacement(keys, settings);
+      return;
+    }
+    for(const key of keys) await importLayerToEda(key, {x:0, y:0}, settings);
     toast(t('edaImportSuccess', {count:keys.length}));
   } catch(error) {
     const message = error && error.message;
     toast(message === 'eda-api-unavailable' ? t('edaImportNeedPcb') : t('edaImportFailed') + (message || t('unknownError')));
   } finally {
-    const enabled = !!state.origin;
-    buttons.forEach(button => { button.disabled = !enabled; });
+    if(!edaMousePlacement) setEdaImportButtonsDisabled(!state.origin);
   }
 }
 function importSelectedLayerToEda(){
@@ -3227,6 +3281,23 @@ function syncEdaImportProtectionMenu(){
   if(checkbox) checkbox.checked = exportCompatibility.edaImportProtection;
 }
 
+function syncEdaExportPositionUi(){
+  const mode = exportCompatibility.edaExportPosition === 'mouse' ? 'mouse' : 'origin';
+  document.querySelectorAll('[data-eda-export-position]').forEach(button => {
+    button.classList.toggle('active', button.dataset.edaExportPosition === mode);
+  });
+  const hint = el('#edaExportPositionHint');
+  if(hint){
+    hint.dataset.i18n = mode === 'mouse' ? 'edaExportMouseHint' : 'edaExportOriginHint';
+    hint.textContent = t(hint.dataset.i18n);
+  }
+}
+function setEdaExportPositionMode(mode, persist){
+  exportCompatibility.edaExportPosition = mode === 'mouse' ? 'mouse' : 'origin';
+  syncEdaExportPositionUi();
+  if(persist) saveLocalPrefs();
+}
+
 /* ---------------- 菜单 / 弹窗 ---------------- */
 function setupMenus(){
   // 下拉菜单由悬浮控制；focus-within 规则让键盘聚焦时也能访问同一菜单。
@@ -3280,13 +3351,12 @@ function setupMenus(){
     };
     scaleMenu.appendChild(b);
   });
-  document.querySelectorAll('[data-language]').forEach(button => {
-    button.onclick = function(){
-      setLanguage(this.dataset.language, true);
-    };
-  });
   document.querySelectorAll('[data-ui-theme-choice]').forEach(button => {
     button.onclick = function(){ setUiTheme(this.dataset.uiThemeChoice, true); };
+  });
+  document.querySelectorAll('[data-eda-export-position]').forEach(button => {
+    attachFortniteHoverEffect(button);
+    button.onclick = function(){ setEdaExportPositionMode(this.dataset.edaExportPosition, true); };
   });
 }
 
@@ -3356,7 +3426,6 @@ function openColorDialog(){
 function resetAllSettings(){
   localStorage.removeItem('pcblg_scale');
   localStorage.removeItem('pcblg_prefs');
-  localStorage.removeItem('pcblg_language');
   localStorage.removeItem('pcblg_ui_theme');
 	  document.body.style.zoom = 1;
   custom.enig = {...DEFAULTS.enig}; custom.osp = {...DEFAULTS.osp}; custom.hasl = {...DEFAULTS.hasl}; custom.bare = {...DEFAULTS.bare};
@@ -3365,7 +3434,9 @@ function resetAllSettings(){
   state.light = { showOverlay:false, autoSense:1, radius:150, intensity:200, strips:[], pendingStart:null };
   state.gray = { ...GRAY_DEFAULTS };
   exportCompatibility.edaImportProtection = true;
+  exportCompatibility.edaExportPosition = 'origin';
   syncEdaImportProtectionMenu();
+  syncEdaExportPositionUi();
   setGroupOpen('groupLight', false, true);
   el('#chkLightOverlay').checked = false;
   setSlider('#sliderLightSense', state.light.autoSense);
@@ -3379,17 +3450,16 @@ function resetAllSettings(){
   el('#grayPreviewMask').value = state.gray.previewMaskId;
   setProcessingMode('gray', false);
   if(state.origin) updateProcess();
-  setLanguage('zh-CN', false);
+  syncLanguageWithEda();
   setUiTheme('eda', false);
   toast(t('resetSuccess'));
 }
 
 /* ---------------- 本地偏好 ---------------- */
 function saveLocalPrefs(){
-  localStorage.setItem('pcblg_prefs', JSON.stringify({ custom, prefilter:state.prefilter, dp:state.dp, edaImportProtection:exportCompatibility.edaImportProtection }));
+  localStorage.setItem('pcblg_prefs', JSON.stringify({ custom, prefilter:state.prefilter, dp:state.dp, edaImportProtection:exportCompatibility.edaImportProtection, edaExportPosition:exportCompatibility.edaExportPosition }));
 }
 function loadLocalPrefs(){
-  setLanguage(localStorage.getItem('pcblg_language'), false);
   setUiTheme(localStorage.getItem('pcblg_ui_theme'), false);
   const s = localStorage.getItem('pcblg_scale');
 	if(s) document.body.style.zoom = parseFloat(s) || 1;
@@ -3401,9 +3471,11 @@ function loadLocalPrefs(){
       if(o.prefilter) state.prefilter = o.prefilter;
       if(o.dp) state.dp = o.dp;
       if(typeof o.edaImportProtection === 'boolean') exportCompatibility.edaImportProtection = o.edaImportProtection;
+      if(o.edaExportPosition === 'mouse') exportCompatibility.edaExportPosition = 'mouse';
     } catch(e){}
   }
   syncEdaImportProtectionMenu();
+  syncEdaExportPositionUi();
 }
 
 /* ---------------- 初始化 ---------------- */
@@ -3511,6 +3583,7 @@ function init(){
 
   setupMenus();
   loadLocalPrefs();
+  syncLanguageWithEda();
   setViewMode('split');
   syncEdgeUI();
   resizeCanvases();

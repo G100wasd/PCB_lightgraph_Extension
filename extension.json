@@ -3,7 +3,7 @@
 	"uuid": "be9b98d89c134b9bb23382ff425f94ff",
 	"displayName": "PCB lightgraph Extension",
 	"description": "将 2D 插画一键转换为可制造 PCB 分层图纸的工具",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"publisher": "wasd, Laplac heroin",
 	"engines": {
 		"eda": "^3.2.0"
