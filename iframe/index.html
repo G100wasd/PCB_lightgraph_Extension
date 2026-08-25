@@ -306,6 +306,7 @@ body[data-ui-theme="eda"] button.btn:hover:not(:disabled){background:#4d4d4d;bor
 body[data-ui-theme="eda"] button.btn.accent,body[data-ui-theme="eda"] button.drawing-action-btn.action-selected{background:#2589e8;border-color:#2589e8;color:#fff;}
 body[data-ui-theme="eda"] button.btn.accent:hover:not(:disabled),body[data-ui-theme="eda"] button.drawing-action-btn.action-selected:hover:not(:disabled){background:#469cf0;border-color:#469cf0;}
 body[data-ui-theme="eda"] .mode-switch{gap:0;margin-bottom:7px;padding:0;border-radius:1px;border-color:#4b4b4b;background:#292929;}
+body[data-ui-theme="eda"] .paint-tool-switch{margin-bottom:0;}
 body[data-ui-theme="eda"] .mode-switch button,body[data-ui-theme="eda"] .paint-tool{border-radius:1px;padding:7px 6px;transition:background 80ms linear,color 80ms linear;}
 body[data-ui-theme="eda"] .mode-switch button.active,body[data-ui-theme="eda"] .paint-tool.active{background:#2589e8;color:#fff;}
 body[data-ui-theme="eda"] .mode-switch button::before,body[data-ui-theme="eda"] .mode-switch button::after,body[data-ui-theme="eda"] .drawing-action-btn::before,body[data-ui-theme="eda"] .drawing-action-btn::after,body[data-ui-theme="eda"] .paint-tool::before,body[data-ui-theme="eda"] .paint-tool::after,body[data-ui-theme="eda"] .star-link::before,body[data-ui-theme="eda"] .star-link::after{display:none;animation:none;}
@@ -318,9 +319,10 @@ body[data-ui-theme="eda"] #toast{border-radius:1px;background:#414141;border-col
 .paint-toolbar label{display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:10.5px;}
 .paint-toolbar input[type=color]{width:34px;height:28px;}
 .paint-toolbar input[type=range]{width:120px;}
-.paint-tool-switch{display:flex;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:4px;}
-/* 画笔和橡皮擦直接沿用主页模式切换的外观与动画，不叠加普通按钮边框。 */
-.paint-tool{position:relative;background:transparent;border:0;border-radius:10px;color:var(--text-dim);padding:7px 12px;cursor:pointer;font:inherit;font-size:10.5px;transition:color 220ms ease,background 220ms ease;}
+.paint-tool-switch{flex:0 0 auto;min-width:144px;margin:0;}
+/* 画笔和橡皮擦复用主页模式切换的分段容器、选中态与动画。 */
+.paint-tool-switch .paint-tool{min-width:72px;padding:7px 12px;}
+.paint-tool{position:relative;background:transparent;border:0;color:var(--text-dim);cursor:pointer;font:inherit;font-size:10.5px;transition:color 220ms ease,background 220ms ease;}
 .paint-tool::before{transition:opacity 180ms ease,inset 260ms cubic-bezier(.22,.61,.36,1),border-width 260ms cubic-bezier(.22,.61,.36,1),border-color 230ms ease,box-shadow 230ms ease,transform 260ms cubic-bezier(.22,.61,.36,1);}
 @media (hover:hover){.paint-tool:not(.active).is-hovered{color:var(--text);background:rgb(76 194 255 / 12%);}}
 .paint-tool.active{background:var(--control-accent);color:var(--control-accent-text);}
@@ -2240,7 +2242,7 @@ function openPaintEditor(){
   showModal(
     '<h3>' + t('liveEdit') + '</h3>' +
     '<div class="paint-toolbar">' +
-      '<div class="paint-tool-switch"><button type="button" class="paint-tool active" id="paintBrush">' + t('paintBrush') + '</button>' +
+      '<div class="mode-switch paint-tool-switch"><button type="button" class="paint-tool active" id="paintBrush">' + t('paintBrush') + '</button>' +
       '<button type="button" class="paint-tool" id="paintEraser">' + t('paintEraser') + '</button></div>' +
       '<label>' + t('paintSize') + '<input type="range" id="paintSize" min="1" max="160" value="12"><span id="paintSizeValue">12</span></label>' +
       '<label id="paintBrushModeWrap">' + t('paintBrushMode') + '<select id="paintBrushMode"><option value="white">' + t('paintWhite') + '</option><option value="transparent">' + t('paintTransparent') + '</option><option value="mask">' + t('paintSolderMask') + '</option></select></label>' +
