@@ -72,6 +72,10 @@ body{
   .topbar{flex-wrap:wrap;}
   .menubar{flex-wrap:wrap;}
   .star-link{position:static;transform:none;order:3;flex:0 0 100%;text-align:center;}
+  /* EDA 工具按钮与求 Star 文本保持同一顶栏，窄窗口可横向查看。 */
+  body[data-ui-theme="eda"] .topbar{flex-wrap:nowrap;overflow-x:auto;}
+  body[data-ui-theme="eda"] .menubar{flex-wrap:nowrap;flex:0 0 auto;}
+  body[data-ui-theme="eda"] .eda-toolbar{flex:0 0 auto;}
 }
 .dropdown{
   display:none;position:absolute;top:100%;left:0;min-width:200px;z-index:100;
@@ -266,9 +270,7 @@ body[data-ui-theme="eda"] .brand-badge{background:#565656;color:#d7d7d7;border-r
 body[data-ui-theme="eda"] .menubar{gap:0;}
 body[data-ui-theme="eda"] .menu>button{padding:8px 10px;border-radius:0;font-size:12px;}
 body[data-ui-theme="eda"] .menu>button:hover,body[data-ui-theme="eda"] .menu:focus-within>button{background:#4b4b4b;}
-body[data-ui-theme="eda"] .star-link{position:static;transform:none;margin-left:auto;padding:4px 8px;border-radius:2px;color:#a6a6a6;font-weight:400;animation:none;}
-body[data-ui-theme="eda"] .star-link:hover{background:#454545;color:#fff;}
-body[data-ui-theme="eda"] .eda-toolbar{display:flex;align-items:center;gap:4px;min-height:38px;padding:4px 10px;background:#303030;border-bottom:1px solid #1f1f1f;}
+body[data-ui-theme="eda"] .eda-toolbar{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;min-width:0;}
 body:not([data-ui-theme="eda"]) .eda-toolbar{display:none;}
 body[data-ui-theme="eda"] .toolbar-group{display:flex;gap:2px;padding-right:7px;margin-right:3px;border-right:1px solid #4b4b4b;}
 body[data-ui-theme="eda"] .toolbar-group:last-child{border-right:0;}
@@ -283,7 +285,6 @@ body[data-ui-theme="eda"] .dropdown button:hover,body[data-ui-theme="eda"] .drop
 body[data-ui-theme="eda"] .main{background:#292929;}
 body[data-ui-theme="eda"] .col-controls{order:1;flex:0 0 286px;min-width:250px;max-width:330px;padding:7px;background:#303030;border-color:#1f1f1f;}
 body[data-ui-theme="eda"] .col-preview{order:2;padding:7px;gap:4px;background:#272727;}
-body[data-ui-theme="eda"] .col-layers{order:3;flex:0 0 286px;min-width:235px;padding:7px;background:#303030;border-left:1px solid #1f1f1f;}
 body[data-ui-theme="eda"] .hint,body[data-ui-theme="eda"] .preview-image-meta{padding:2px 4px;color:#b6b6b6;}
 body[data-ui-theme="eda"] .preview-wrap,body[data-ui-theme="eda"] .quad-cell .w,body[data-ui-theme="eda"] .layers-grid .lp .w{border-radius:1px;border-color:#4b4b4b;background-color:#151515;background-image:radial-gradient(#333 0.7px,transparent .7px);background-size:5px 5px;}
 body[data-ui-theme="eda"] .quad-grid,body[data-ui-theme="eda"] .layers-grid{gap:6px;}
@@ -310,9 +311,7 @@ body[data-ui-theme="eda"] .mode-switch button.active,body[data-ui-theme="eda"] .
 body[data-ui-theme="eda"] .mode-switch button::before,body[data-ui-theme="eda"] .mode-switch button::after,body[data-ui-theme="eda"] .drawing-action-btn::before,body[data-ui-theme="eda"] .drawing-action-btn::after,body[data-ui-theme="eda"] .paint-tool::before,body[data-ui-theme="eda"] .paint-tool::after,body[data-ui-theme="eda"] .star-link::before,body[data-ui-theme="eda"] .star-link::after{display:none;animation:none;}
 body[data-ui-theme="eda"] .modal{border-radius:1px;background:#3b3b3b;border-color:#5a5a5a;box-shadow:0 12px 30px rgba(0,0,0,.6);}
 body[data-ui-theme="eda"] #toast{border-radius:1px;background:#414141;border-color:#5a5a5a;}
-body[data-ui-theme="eda"] #edaDock{margin-top:6px;border-top:1px solid #4a4a4a;padding-top:6px;}
-body:not([data-ui-theme="eda"]) #edaDock{display:none;}
-@media (max-width:960px){body[data-ui-theme="eda"] .main{overflow:auto;}body[data-ui-theme="eda"] .col-controls{flex-basis:245px;min-width:220px;}body[data-ui-theme="eda"] .col-layers{flex-basis:230px;min-width:210px;}.toolbar-button[data-quick-action="paint"]{display:none;}}
+@media (max-width:960px){body[data-ui-theme="eda"] .main{overflow:auto;}body[data-ui-theme="eda"] .col-controls{flex-basis:245px;min-width:220px;}}
 /* 内置画板直接编辑原图像素；显示尺寸仅用于适配窗口，不改变源图分辨率。 */
 .paint-modal{width:min(1120px,94vw);max-width:1120px;height:min(88vh,820px);display:flex;flex-direction:column;overflow:hidden;}
 .paint-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--border);}
@@ -353,15 +352,6 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
 <div class="topbar">
   <div class="brand"><span data-i18n="brandName">PCB图片分层器</span><span class="brand-badge" id="brandBadge">插件版</span></div>
   <div class="menubar" id="menubar">
-    <div class="menu" id="menuFile">
-      <button type="button" data-i18n="menuFile">File</button>
-      <div class="dropdown">
-        <button type="button" id="mImport" data-i18n="importImage">导入图片</button>
-        <button type="button" id="mExport" class="disabled" data-i18n="exportDrawing">导出全部图纸</button>
-        <button type="button" id="mSave" data-i18n="saveProject">保存工程…</button>
-        <button type="button" id="mLoad" data-i18n="loadProject">导入工程…</button>
-      </div>
-    </div>
     <div class="menu" id="menuEdit">
       <button type="button" data-i18n="menuEdit">编辑</button>
       <div class="dropdown">
@@ -408,37 +398,32 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
         <button type="button" id="mReset" data-i18n="resetAll">重置所有设置…</button>
       </div>
     </div>
-    <div class="menu" id="menuView">
-      <button type="button" data-i18n="menuView">视图</button>
-      <div class="dropdown">
-        <button type="button" data-view-mode="split" data-i18n="viewSplit">分隔视图</button>
-        <button type="button" data-view-mode="quad" data-i18n="viewQuad">四分视图</button>
-      </div>
-    </div>
     <div class="menu" id="menuHelp">
       <button type="button" data-i18n="menuHelp">关于</button>
       <div class="dropdown">
         <button type="button" id="mCheckUpdates" data-i18n="checkUpdates">检查更新</button>
-        <button type="button" id="mGitHub" data-i18n="githubLink">跳转至 GitHub</button>
+        <div class="submenu" id="subRepositories">
+          <button type="button" data-i18n="repositoryMenu">跳转至 ▸</button>
+          <div class="dropdown">
+            <button type="button" data-repository-link="installed" data-i18n="installedRepository">原安装版仓库</button>
+            <button type="button" data-repository-link="portable" data-i18n="portableRepository">便携版仓库</button>
+            <button type="button" data-repository-link="extension" data-i18n="extensionRepository">插件版仓库</button>
+          </div>
+        </div>
         <button type="button" id="mIssueFeedback" data-i18n="issueFeedback">问题反馈</button>
       </div>
     </div>
   </div>
-  <button type="button" class="star-link" id="btnStarProject" data-i18n="starProject">你觉得好用就给我点一个Star吧(ﾉ&gt;ω&lt;)ﾉ</button>
-</div>
-
-<div class="eda-toolbar" role="toolbar" aria-label="EDA 工作台快捷工具栏" data-i18n-aria="edaToolbar">
-  <div class="toolbar-group">
-    <button type="button" class="toolbar-button primary" data-quick-action="import-image" data-i18n="toolbarImport">导入图片</button>
-    <button type="button" class="toolbar-button" data-quick-action="save-project" data-i18n="toolbarSave">保存工程</button>
-    <button type="button" class="toolbar-button" data-quick-action="export-all" disabled data-i18n="toolbarExport">导出图纸</button>
-  </div>
-  <div class="toolbar-group">
-    <button type="button" class="toolbar-button" data-quick-action="paint" disabled data-i18n="toolbarEdit">快捷编辑</button>
-  </div>
-  <div class="toolbar-group">
-    <button type="button" class="toolbar-button active" data-quick-view="split" data-i18n="viewSplit">分隔视图</button>
-    <button type="button" class="toolbar-button" data-quick-view="quad" data-i18n="viewQuad">四分视图</button>
+  <div class="eda-toolbar" role="toolbar" aria-label="EDA 工作台快捷工具栏" data-i18n-aria="edaToolbar">
+    <div class="toolbar-group">
+      <button type="button" class="toolbar-button primary" data-quick-action="import-image" data-i18n="toolbarImport">导入图片</button>
+      <button type="button" class="toolbar-button" data-quick-action="load-project" data-i18n="toolbarLoad">导入工程</button>
+      <button type="button" class="toolbar-button" data-quick-action="save-project" data-i18n="toolbarExportProject">导出工程</button>
+    </div>
+    <div class="toolbar-group">
+      <button type="button" class="toolbar-button active" data-quick-view="split" data-i18n="viewSplit">叠加视图</button>
+      <button type="button" class="toolbar-button" data-quick-view="quad" data-i18n="viewQuad">四分视图</button>
+    </div>
   </div>
 </div>
 
@@ -545,26 +530,8 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
       </div>
     </div>
 
-    <div class="group" id="groupActions">
-      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="drawingActions">图纸操作</span></button>
-      <div class="content"><div class="inner">
-        <div class="btn-row">
-          <button type="button" class="btn drawing-action-btn flex-fill" id="btnImport"><span class="drawing-action-label" data-i18n="importDrawing">导入图纸</span></button>
-          <button type="button" class="btn drawing-action-btn action-selected flex-fill" id="btnExport" disabled data-i18n="exportDrawing">导出全部图纸</button>
-        </div>
-        <label class="ctl"><span class="lab" data-i18n="exportLayerSelect">选择导出层</span>
-          <select id="selectExportLayer" disabled>
-            <option value="Top_Silk" data-i18n="layerSilk">Top Silk（丝印）</option>
-            <option value="Top_Mask" data-i18n="layerMask">Top Mask（阻焊）</option>
-            <option value="Top_Copper" data-i18n="layerCopper">Top Copper（线路）</option>
-            <option value="Bottom_Mask" id="exportBottomOption" data-i18n="layerBottom" hidden>Bottom Mask（透光）</option>
-          </select>
-        </label>
-        <div class="btn-row centered"><button type="button" class="btn drawing-action-btn action-selected" id="btnExportSelected" disabled data-i18n="exportSelectedLayer">导出单张图纸</button></div>
-      </div></div>
-    </div>
     <div class="group open" id="groupEdaImport">
-      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edaImport">导入到 EDA 中</span></button>
+      <button type="button" class="group-header"><span class="chev">▶</span><span data-i18n="edaImport">导出至 EDA</span></button>
       <div class="content"><div class="inner">
         <div class="btn-row eda-import-position">
           <label class="ctl flex-fill"><span class="lab" data-i18n="edaCoordinateX">X 坐标（mil）</span><input id="inputEdaX" type="number" value="0" step="1"></label>
@@ -587,15 +554,6 @@ body:not([data-ui-theme="eda"]) #edaDock{display:none;}
     </div>
   </div>
 
-  <div class="col-layers" id="colLayers" style="display:none">
-    <div class="layers-grid" id="layersGrid">
-      <div class="lp"><div class="t" data-i18n="layerCopper">Top Copper (线路)</div><div class="w"><canvas id="canvasCopper"></canvas></div></div>
-      <div class="lp"><div class="t" data-i18n="layerMask">Top Mask (阻焊)</div><div class="w"><canvas id="canvasMask"></canvas></div></div>
-      <div class="lp"><div class="t" data-i18n="layerSilk">Top Silk (丝印)</div><div class="w"><canvas id="canvasSilk"></canvas></div></div>
-      <div class="lp" id="bottomPreviewItem"><div class="t" data-i18n="layerBottom">Bottom Mask（透光）</div><div class="w"><canvas id="canvasBottom"></canvas></div></div>
-    </div>
-    <div id="edaDock"></div>
-  </div>
 </div>
 
 <div class="modal-back" id="modalBack">
@@ -632,10 +590,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { cropTitle:'快捷裁剪', cropHint:'拖�
 Object.assign(TRANSLATIONS['zh-TW'], { cropTitle:'快速裁切', cropHint:'拖曳裁切框移動；拖曳邊或四角調整範圍。滾輪縮放，右鍵拖曳畫面。', cropSkip:'取消並匯入原圖', cropConfirm:'裁切並匯入' });
 Object.assign(TRANSLATIONS.en, { cropTitle:'Quick Crop', cropHint:'Drag the crop area to move it; drag edges or corners to resize. Wheel to zoom; right-drag to pan.', cropSkip:'Skip and Import Original', cropConfirm:'Crop and Import' });
 Object.assign(TRANSLATIONS.ja, { cropTitle:'クイックトリミング', cropHint:'枠内をドラッグして移動し、辺または角をドラッグして範囲を調整します。ホイールで拡大縮小、右ドラッグで移動できます。', cropSkip:'キャンセルして元画像を読み込む', cropConfirm:'トリミングして読み込む' });
-Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', githubLink:'跳转至 GitHub', issueFeedback:'问题反馈' });
-Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', githubLink:'前往 GitHub', issueFeedback:'問題回饋' });
-Object.assign(TRANSLATIONS.en, { menuHelp:'About', githubLink:'Open GitHub', issueFeedback:'Report an Issue' });
-Object.assign(TRANSLATIONS.ja, { menuHelp:'概要', githubLink:'GitHub を開く', issueFeedback:'問題を報告' });
+Object.assign(TRANSLATIONS['zh-CN'], { menuHelp:'关于', repositoryMenu:'跳转至 ▸', installedRepository:'原安装版仓库', portableRepository:'便携版仓库', extensionRepository:'插件版仓库', issueFeedback:'问题反馈' });
+Object.assign(TRANSLATIONS['zh-TW'], { menuHelp:'關於', repositoryMenu:'前往 ▸', installedRepository:'原安裝版儲存庫', portableRepository:'便攜版儲存庫', extensionRepository:'外掛版儲存庫', issueFeedback:'問題回饋' });
+Object.assign(TRANSLATIONS.en, { menuHelp:'About', repositoryMenu:'Open ▸', installedRepository:'Original App Repository', portableRepository:'Portable Repository', extensionRepository:'Extension Repository', issueFeedback:'Report an Issue' });
+Object.assign(TRANSLATIONS.ja, { menuHelp:'概要', repositoryMenu:'移動先 ▸', installedRepository:'元インストール版リポジトリ', portableRepository:'ポータブル版リポジトリ', extensionRepository:'拡張版リポジトリ', issueFeedback:'問題を報告' });
 Object.assign(TRANSLATIONS['zh-CN'], { starProject:'你觉得好用就给我点一个Star吧(ﾉ>ω<)ﾉ' });
 Object.assign(TRANSLATIONS['zh-TW'], { starProject:'覺得好用就給我一個 Star 吧(ﾉ>ω<)ﾉ' });
 Object.assign(TRANSLATIONS.en, { starProject:'Enjoy it? Please give it a Star! (ﾉ>ω<)ﾉ' });
@@ -644,10 +602,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { checkUpdates:'检查更新', checkingUpda
 Object.assign(TRANSLATIONS['zh-TW'], { checkUpdates:'檢查更新', checkingUpdates:'正在檢查更新…', updateAvailableTitle:'檢查到新版本發布', currentVersion:'目前版本', latestVersion:'最新版本', openRelease:'前往 Release', alreadyLatest:'已是最新版本', noReleaseAvailable:'暫未發現已發布版本', updateCheckFailed:'檢查更新失敗，請稍後再試' });
 Object.assign(TRANSLATIONS.en, { checkUpdates:'Check for Updates', checkingUpdates:'Checking for Updates…', updateAvailableTitle:'A New Version Is Available', currentVersion:'Current Version', latestVersion:'Latest Version', openRelease:'Open Release', alreadyLatest:'You are up to date', noReleaseAvailable:'No published release found', updateCheckFailed:'Unable to check for updates. Please try again later.' });
 Object.assign(TRANSLATIONS.ja, { checkUpdates:'更新を確認', checkingUpdates:'更新を確認中…', updateAvailableTitle:'新しいバージョンが公開されました', currentVersion:'現在のバージョン', latestVersion:'最新バージョン', openRelease:'Release を開く', alreadyLatest:'最新バージョンです', noReleaseAvailable:'公開済みの Release はありません', updateCheckFailed:'更新を確認できませんでした。後でもう一度お試しください。' });
-Object.assign(TRANSLATIONS['zh-CN'], { menuView:'视图', viewOverlay:'叠加视图', viewSplit:'分隔视图', viewQuad:'四分视图' });
-Object.assign(TRANSLATIONS['zh-TW'], { menuView:'檢視', viewOverlay:'疊加檢視', viewSplit:'分隔檢視', viewQuad:'四分檢視' });
-Object.assign(TRANSLATIONS.en, { menuView:'View', viewOverlay:'Overlay View', viewSplit:'Split View', viewQuad:'Quad View' });
-Object.assign(TRANSLATIONS.ja, { menuView:'表示', viewOverlay:'重ね合わせ表示', viewSplit:'分割表示', viewQuad:'4 分割表示' });
+Object.assign(TRANSLATIONS['zh-CN'], { menuView:'视图', viewOverlay:'叠加视图', viewSplit:'叠加视图', viewQuad:'四分视图' });
+Object.assign(TRANSLATIONS['zh-TW'], { menuView:'檢視', viewOverlay:'疊加檢視', viewSplit:'疊加檢視', viewQuad:'四分檢視' });
+Object.assign(TRANSLATIONS.en, { menuView:'View', viewOverlay:'Overlay View', viewSplit:'Overlay View', viewQuad:'Quad View' });
+Object.assign(TRANSLATIONS.ja, { menuView:'表示', viewOverlay:'重ね合わせ表示', viewSplit:'重ね合わせ表示', viewQuad:'4 分割表示' });
 Object.assign(TRANSLATIONS['zh-CN'], { quadComposite:'叠加图' });
 Object.assign(TRANSLATIONS['zh-TW'], { quadComposite:'疊加圖' });
 Object.assign(TRANSLATIONS.en, { quadComposite:'Composite' });
@@ -660,6 +618,10 @@ Object.assign(TRANSLATIONS['zh-CN'], { edaImport:'导入到 EDA 中', edaCoordin
 Object.assign(TRANSLATIONS['zh-TW'], { edaImport:'匯入到 EDA', edaCoordinateX:'X 座標（mil）', edaCoordinateY:'Y 座標（mil）', edaImportHint:'將在目前 PCB 中產生圖元；座標原點為 (0, 0)。', edaImportLayerSelect:'選擇要匯入的圖紙', edaImportSelected:'匯入選定圖紙', edaImportAll:'匯入所有圖紙', edaImporting:'正在匯入到 EDA…', edaImportSuccess:'已匯入 {count} 張圖紙到 EDA', edaImportNeedPcb:'請在嘉立創 EDA 的 PCB 編輯器中開啟本外掛', edaImportFailed:'匯入到 EDA 失敗：' });
 Object.assign(TRANSLATIONS.en, { edaImport:'Import into EDA', edaCoordinateX:'X coordinate (mil)', edaCoordinateY:'Y coordinate (mil)', edaImportHint:'Creates primitives in the current PCB; origin is (0, 0).', edaImportLayerSelect:'Drawing to import', edaImportSelected:'Import Selected Drawing', edaImportAll:'Import All Drawings', edaImporting:'Importing into EDA…', edaImportSuccess:'Imported {count} drawing(s) into EDA', edaImportNeedPcb:'Open this plugin from the JLCEDA PCB editor', edaImportFailed:'Failed to import into EDA: ' });
 Object.assign(TRANSLATIONS.ja, { edaImport:'EDA に取り込む', edaCoordinateX:'X 座標（mil）', edaCoordinateY:'Y 座標（mil）', edaImportHint:'現在の PCB に図形を作成します。原点は (0, 0) です。', edaImportLayerSelect:'取り込む図面を選択', edaImportSelected:'選択した図面を取り込む', edaImportAll:'すべての図面を取り込む', edaImporting:'EDA に取り込み中…', edaImportSuccess:'{count} 枚の図面を EDA に取り込みました', edaImportNeedPcb:'嘉立创 EDA の PCB エディターから本プラグインを開いてください', edaImportFailed:'EDA への取り込みに失敗しました：' });
+Object.assign(TRANSLATIONS['zh-CN'], { edaImport:'导出至 EDA', edaImportLayerSelect:'选择要导出的图纸', edaImportSelected:'导出选定图纸', edaImportAll:'导出所有图纸', edaImporting:'正在导出至 EDA…', edaImportSuccess:'已导出 {count} 张图纸至 EDA', edaImportFailed:'导出至 EDA 失败：' });
+Object.assign(TRANSLATIONS['zh-TW'], { edaImport:'匯出至 EDA', edaImportLayerSelect:'選擇要匯出的圖紙', edaImportSelected:'匯出選定圖紙', edaImportAll:'匯出所有圖紙', edaImporting:'正在匯出至 EDA…', edaImportSuccess:'已匯出 {count} 張圖紙至 EDA', edaImportFailed:'匯出至 EDA 失敗：' });
+Object.assign(TRANSLATIONS.en, { edaImport:'Export to EDA', edaImportLayerSelect:'Drawing to export', edaImportSelected:'Export Selected Drawing', edaImportAll:'Export All Drawings', edaImporting:'Exporting to EDA…', edaImportSuccess:'Exported {count} drawing(s) to EDA', edaImportFailed:'Export to EDA failed: ' });
+Object.assign(TRANSLATIONS.ja, { edaImport:'EDA へ出力', edaImportLayerSelect:'出力する図面を選択', edaImportSelected:'選択した図面を出力', edaImportAll:'すべての図面を出力', edaImporting:'EDA へ出力中…', edaImportSuccess:'{count} 枚の図面を EDA へ出力しました', edaImportFailed:'EDA への出力に失敗しました：' });
 Object.assign(TRANSLATIONS['zh-CN'], { importDrawingReplace:'导入图纸并覆盖' });
 Object.assign(TRANSLATIONS['zh-TW'], { importDrawingReplace:'匯入圖紙並覆蓋' });
 Object.assign(TRANSLATIONS.en, { importDrawingReplace:'Import Drawing and Replace' });
@@ -697,10 +659,14 @@ Object.assign(TRANSLATIONS['zh-CN'], { pageTitle:'PCB图片分层器（插件版
 Object.assign(TRANSLATIONS['zh-TW'], { pageTitle:'PCB圖片分層器（擴充版）', brandName:'PCB圖片分層器', brandEdition:'擴充版' });
 Object.assign(TRANSLATIONS.en, { pageTitle:'PCB_lightgraph Extension', brandName:'PCB_lightgraph', brandEdition:'Extension' });
 Object.assign(TRANSLATIONS.ja, { pageTitle:'PCB画像レイヤー分離器（拡張版）', brandName:'PCB画像レイヤー分離器', brandEdition:'拡張版' });
-Object.assign(TRANSLATIONS['zh-CN'], { uiThemeMenu:'界面风格 ▸', uiThemePortable:'便捷版 UI', uiThemeEda:'EDA 界面 UI', edaToolbar:'EDA 工作台快捷工具栏', toolbarImport:'导入图片', toolbarSave:'保存工程', toolbarExport:'导出图纸', toolbarEdit:'快捷编辑' });
-Object.assign(TRANSLATIONS['zh-TW'], { uiThemeMenu:'介面風格 ▸', uiThemePortable:'便捷版 UI', uiThemeEda:'EDA 介面 UI', edaToolbar:'EDA 工作台快捷工具列', toolbarImport:'匯入圖片', toolbarSave:'儲存工程', toolbarExport:'匯出圖紙', toolbarEdit:'快速編輯' });
-Object.assign(TRANSLATIONS.en, { uiThemeMenu:'Interface Style ▸', uiThemePortable:'Portable UI', uiThemeEda:'EDA UI', edaToolbar:'EDA workbench toolbar', toolbarImport:'Import Image', toolbarSave:'Save Project', toolbarExport:'Export Drawings', toolbarEdit:'Quick Edit' });
-Object.assign(TRANSLATIONS.ja, { uiThemeMenu:'UI スタイル ▸', uiThemePortable:'ポータブル UI', uiThemeEda:'EDA UI', edaToolbar:'EDA ワークベンチツールバー', toolbarImport:'画像を読み込む', toolbarSave:'プロジェクトを保存', toolbarExport:'図面を書き出す', toolbarEdit:'クイック編集' });
+Object.assign(TRANSLATIONS['zh-CN'], { uiThemeMenu:'界面风格 ▸', uiThemePortable:'便捷版 UI', uiThemeEda:'EDA 界面 UI', edaToolbar:'EDA 工作台快捷工具栏', toolbarImport:'导入图片', toolbarSave:'保存工程', toolbarLoad:'导入工程' });
+Object.assign(TRANSLATIONS['zh-TW'], { uiThemeMenu:'介面風格 ▸', uiThemePortable:'便捷版 UI', uiThemeEda:'EDA 介面 UI', edaToolbar:'EDA 工作台快捷工具列', toolbarImport:'匯入圖片', toolbarSave:'儲存工程', toolbarLoad:'匯入工程' });
+Object.assign(TRANSLATIONS.en, { uiThemeMenu:'Interface Style ▸', uiThemePortable:'Portable UI', uiThemeEda:'EDA UI', edaToolbar:'EDA workbench toolbar', toolbarImport:'Import Image', toolbarSave:'Save Project', toolbarLoad:'Load Project' });
+Object.assign(TRANSLATIONS.ja, { uiThemeMenu:'UI スタイル ▸', uiThemePortable:'ポータブル UI', uiThemeEda:'EDA UI', edaToolbar:'EDA ワークベンチツールバー', toolbarImport:'画像を読み込む', toolbarSave:'プロジェクトを保存', toolbarLoad:'プロジェクトを読み込む' });
+Object.assign(TRANSLATIONS['zh-CN'], { toolbarExportProject:'导出工程' });
+Object.assign(TRANSLATIONS['zh-TW'], { toolbarExportProject:'匯出工程' });
+Object.assign(TRANSLATIONS.en, { toolbarExportProject:'Export Project' });
+Object.assign(TRANSLATIONS.ja, { toolbarExportProject:'プロジェクトを書き出す' });
 const PRODUCT_NAME = 'PCB_lightgraph Extension';
 const APP_VERSION = 'v0.1.0';
 const GITHUB_REPOSITORY = 'G100wasd/PCB_lightgraph_Extension';
@@ -741,8 +707,8 @@ function setLanguage(language, persist){
 function syncUiThemeLayout(){
   const edaImportGroup = el('#groupEdaImport');
   if(!edaImportGroup) return;
-  if(currentUiTheme === 'eda') el('#edaDock').append(edaImportGroup);
-  else el('#groupActions').before(edaImportGroup);
+  // EDA 导入操作固定在左侧参数栏底部，切换界面风格不改变操作位置。
+  el('#controls').append(edaImportGroup);
 }
 function setUiTheme(theme, persist){
   currentUiTheme = theme === 'portable' ? 'portable' : 'eda';
@@ -1671,10 +1637,13 @@ function setProcessingMode(mode, shouldRender){
   el('#colorControls').hidden = isGray;
   el('#grayControls').hidden = !isGray;
   // 灰度模式保留右栏的透光层预览，但明确显示为无输出。
-  el('#bottomPreviewItem').hidden = false;
-  el('#exportBottomOption').hidden = isGray;
+  const bottomPreviewItem = el('#bottomPreviewItem');
+  const exportBottomOption = el('#exportBottomOption');
+  const exportLayerSelect = el('#selectExportLayer');
+  if(bottomPreviewItem) bottomPreviewItem.hidden = false;
+  if(exportBottomOption) exportBottomOption.hidden = isGray;
   el('#importBottomOption').hidden = isGray;
-  if(isGray && el('#selectExportLayer').value === 'Bottom_Mask') el('#selectExportLayer').value = 'Top_Silk';
+  if(isGray && exportLayerSelect && exportLayerSelect.value === 'Bottom_Mask') exportLayerSelect.value = 'Top_Silk';
   if(isGray && el('#selectImportEdaLayer').value === 'Bottom_Mask') el('#selectImportEdaLayer').value = 'Top_Silk';
   syncQuadLabels();
   const modeButtons = document.querySelectorAll('[data-processing-mode]');
@@ -1690,9 +1659,6 @@ function setViewMode(mode){
   const isQuad = state.viewMode === 'quad';
   el('#compositeWrap').hidden = isQuad;
   el('#quadGrid').hidden = !isQuad;
-  // 右栏始终保留 EDA 导入操作；四分视图不重复显示生产层缩略图。
-  el('#colLayers').style.display = 'flex';
-  el('#layersGrid').hidden = isQuad;
   document.querySelectorAll('[data-view-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.viewMode === state.viewMode));
   document.querySelectorAll('[data-quick-view]').forEach(btn => btn.classList.toggle('active', btn.dataset.quickView === state.viewMode));
   updateQuadPlaceholders();
@@ -1721,7 +1687,7 @@ const previewStates = {
 const quadPreviewCanvases = {
   topLeft:'#canvasQuadCopper', topRight:'#canvasQuadMask', bottomLeft:'#canvasQuadSilk', bottomRight:'#canvasQuadBottom'
 };
-// 四分视图共享相机，保证任意窗口操作后四张图保持同一观察位置。
+// 共享相机的平移使用图像宽高比例，实时低分辨率预览与最终全分辨率预览切换时不跳位。
 const quadCamera = { zoom:1, pan:{x:0,y:0} };
 // 分隔视图也复用同一相机，使主预览与三个生产层始终同步。
 const splitCamera = { zoom:1, pan:{x:0,y:0} };
@@ -1767,20 +1733,39 @@ function previewFit(st, canvasEl){
   if(!st.img || canvasEl.width <= 0 || canvasEl.height <= 0) return 1;
   return Math.min(canvasEl.width/st.img.width, canvasEl.height/st.img.height);
 }
-function splitViewForCanvas(st, canvasEl){
-  const scale = previewFit(st, canvasEl) * splitCamera.zoom;
-  return { zoom:splitCamera.zoom, pan:{ x:splitCamera.pan.x * scale, y:splitCamera.pan.y * scale }, unbounded:true };
+function sharedViewForCanvas(camera, st, canvasEl, unbounded){
+  if(!st.img) return { zoom:camera.zoom, pan:{x:0,y:0}, unbounded:!!unbounded };
+  const scale = previewFit(st, canvasEl) * camera.zoom;
+  return {
+    zoom:camera.zoom,
+    pan:{ x:camera.pan.x * st.img.width * scale, y:camera.pan.y * st.img.height * scale },
+    unbounded:!!unbounded
+  };
 }
-function zoomSplitCameraAt(st, canvasEl, x, y, zoom){
-  const oldScale = previewFit(st, canvasEl) * splitCamera.zoom;
+function splitViewForCanvas(st, canvasEl){
+  return sharedViewForCanvas(splitCamera, st, canvasEl, true);
+}
+function quadViewForCanvas(st, canvasEl){
+  return sharedViewForCanvas(quadCamera, st, canvasEl, false);
+}
+function clampSharedCamera(camera, st, canvasEl){
+  const view = sharedViewForCanvas(camera, st, canvasEl, false);
+  clampPanForImage(view, st.img, canvasEl.width, canvasEl.height);
+  const scale = previewFit(st, canvasEl) * camera.zoom;
+  camera.pan.x = scale ? view.pan.x / (st.img.width * scale) : 0;
+  camera.pan.y = scale ? view.pan.y / (st.img.height * scale) : 0;
+}
+function zoomSharedCameraAt(camera, st, canvasEl, x, y, zoom, unbounded){
+  const oldScale = previewFit(st, canvasEl) * camera.zoom;
   const oldWidth = st.img.width * oldScale, oldHeight = st.img.height * oldScale;
-  const sourceX = (x - (canvasEl.width-oldWidth)*0.5) / oldScale - splitCamera.pan.x;
-  const sourceY = (y - (canvasEl.height-oldHeight)*0.5) / oldScale - splitCamera.pan.y;
-  splitCamera.zoom = zoom;
-  const nextScale = previewFit(st, canvasEl) * splitCamera.zoom;
+  const sourceX = (x - (canvasEl.width-oldWidth)*0.5) / oldScale - camera.pan.x * st.img.width;
+  const sourceY = (y - (canvasEl.height-oldHeight)*0.5) / oldScale - camera.pan.y * st.img.height;
+  camera.zoom = zoom;
+  const nextScale = previewFit(st, canvasEl) * camera.zoom;
   const nextWidth = st.img.width * nextScale, nextHeight = st.img.height * nextScale;
-  splitCamera.pan.x = (x - (canvasEl.width-nextWidth)*0.5) / nextScale - sourceX;
-  splitCamera.pan.y = (y - (canvasEl.height-nextHeight)*0.5) / nextScale - sourceY;
+  camera.pan.x = ((x - (canvasEl.width-nextWidth)*0.5) / nextScale - sourceX) / st.img.width;
+  camera.pan.y = ((y - (canvasEl.height-nextHeight)*0.5) / nextScale - sourceY) / st.img.height;
+  if(!unbounded) clampSharedCamera(camera, st, canvasEl);
 }
 function clampPanForImage(view, img, cw, ch){
   if(view.unbounded) return;
@@ -1846,6 +1831,7 @@ function renderAllPreviews(){
   for(const k in previewStates){
     const st = previewStates[k];
     const c = el(st.canvas);
+    if(!c) continue;
     const view = state.viewMode === 'split' ? splitViewForCanvas(st, c) : st;
     if(c.width > 0 && c.height > 0) renderPreviewCanvas(st, c, view, k === 'composite');
   }
@@ -1853,7 +1839,7 @@ function renderAllPreviews(){
     for(const k in quadPreviewCanvases){
       const c = el(quadPreviewCanvases[k]);
       const previewKey = quadPreviewKey(k);
-      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[previewKey], c, quadCamera, previewKey === 'composite');
+      if(c.width > 0 && c.height > 0) renderPreviewCanvas(previewStates[previewKey], c, quadViewForCanvas(previewStates[previewKey], c), previewKey === 'composite');
     }
   }
 }
@@ -1862,6 +1848,7 @@ function resizeCanvases(){
   for(const k in previewStates){
     const st = previewStates[k];
     const c = el(st.canvas);
+    if(!c) continue;
     const parent = c.parentElement;
     if(parent && parent.clientWidth > 0 && parent.clientHeight > 0){
       c.width = parent.clientWidth; c.height = parent.clientHeight;
@@ -1892,6 +1879,7 @@ function schedulePreviewResize(){
 function attachPreviewInteraction(key){
   const st = previewStates[key];
   const c = el(st.canvas);
+  if(!c) return;
   let panning = false, lastX = 0, lastY = 0;
   c.addEventListener('wheel', function(e){
     e.preventDefault();
@@ -1904,7 +1892,7 @@ function attachPreviewInteraction(key){
     const r = c.getBoundingClientRect();
     const cx = e.clientX - r.left, cy = e.clientY - r.top;
     if(state.viewMode === 'split'){
-      zoomSplitCameraAt(st, c, cx, cy, newZoom);
+      zoomSharedCameraAt(splitCamera, st, c, cx, cy, newZoom, true);
       syncPreviewImageMeta();
       renderAllPreviews();
       return;
@@ -1937,7 +1925,7 @@ function attachPreviewInteraction(key){
     lastX = e.clientX; lastY = e.clientY;
     if(state.viewMode === 'split'){
       const scale = previewFit(st, c) * splitCamera.zoom;
-      splitCamera.pan.x += dx / scale; splitCamera.pan.y += dy / scale;
+      splitCamera.pan.x += dx / (scale * st.img.width); splitCamera.pan.y += dy / (scale * st.img.height);
       renderAllPreviews();
     } else {
       st.pan.x += dx; st.pan.y += dy;
@@ -1962,15 +1950,7 @@ function attachQuadPreviewInteraction(key){
     const oldZoom = quadCamera.zoom, newZoom = clamp(oldZoom * Math.pow(1.12, -e.deltaY/120), 0.2, 8.0);
     if(Math.abs(newZoom-oldZoom) < 1e-6) return;
     const r = c.getBoundingClientRect(), cx = e.clientX - r.left, cy = e.clientY - r.top;
-    const oldRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, oldZoom, quadCamera.pan);
-    quadCamera.zoom = newZoom;
-    if(cx >= oldRect.x && cx <= oldRect.x+oldRect.w && cy >= oldRect.y && cy <= oldRect.y+oldRect.h){
-      const u = (cx-oldRect.x)/oldRect.w, v = (cy-oldRect.y)/oldRect.h;
-      const nextRect = calcPreviewRect(c.width, c.height, st.img.width, st.img.height, newZoom, quadCamera.pan);
-      quadCamera.pan.x += cx - (nextRect.x + u*nextRect.w);
-      quadCamera.pan.y += cy - (nextRect.y + v*nextRect.h);
-    }
-    clampPanForImage(quadCamera, st.img, c.width, c.height);
+    zoomSharedCameraAt(quadCamera, st, c, cx, cy, newZoom, false);
     syncPreviewImageMeta();
     renderAllPreviews();
   }, { passive:false });
@@ -1982,9 +1962,11 @@ function attachQuadPreviewInteraction(key){
   window.addEventListener('pointermove', function(e){
     if(!panning) return;
     const st = getState();
-    quadCamera.pan.x += e.clientX - lastX; quadCamera.pan.y += e.clientY - lastY;
+    const scale = previewFit(st, c) * quadCamera.zoom;
+    quadCamera.pan.x += (e.clientX - lastX) / (scale * st.img.width);
+    quadCamera.pan.y += (e.clientY - lastY) / (scale * st.img.height);
     lastX = e.clientX; lastY = e.clientY;
-    clampPanForImage(quadCamera, st.img, c.width, c.height);
+    clampSharedCamera(quadCamera, st, c);
     renderAllPreviews();
   });
   window.addEventListener('pointerup', function(){ if(panning){ panning = false; c.style.cursor = 'default'; } });
@@ -1997,7 +1979,7 @@ function attachLightPlacement(canvasSelector, isQuadCanvas){
     if(e.button !== 0 || state.processingMode !== 'color' || !masterState.light || !state.origin) return;
     const st = previewStates.composite;
     if(!st.img) return;
-    const view = isQuadCanvas ? quadCamera : (state.viewMode === 'split' ? splitViewForCanvas(st, canvas) : st);
+    const view = isQuadCanvas ? quadViewForCanvas(st, canvas) : (state.viewMode === 'split' ? splitViewForCanvas(st, canvas) : st);
     const bounds = canvas.getBoundingClientRect();
     const x = (e.clientX-bounds.left)*canvas.width/bounds.width, y = (e.clientY-bounds.top)*canvas.height/bounds.height;
     const rect = calcPreviewRect(canvas.width, canvas.height, st.img.width, st.img.height, view.zoom, view.pan);
@@ -2733,29 +2715,28 @@ function downloadBlob(blob, name){
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function setExportControlsEnabled(enabled){
-  el('#btnExport').disabled = !enabled;
-  el('#selectExportLayer').disabled = !enabled;
+  const setDisabled = (selector) => { const node = el(selector); if(node) node.disabled = !enabled; };
+  setDisabled('#btnExport');
+  setDisabled('#selectExportLayer');
   el('#selectImportEdaLayer').disabled = !enabled;
-  el('#btnExportSelected').disabled = !enabled;
+  setDisabled('#btnExportSelected');
   el('#btnImportSelectedEda').disabled = !enabled;
   el('#btnImportAllEda').disabled = !enabled;
-  el('#mExport').classList.toggle('disabled', !enabled);
-  const toolbarExport = document.querySelector('[data-quick-action="export-all"]');
-  if(toolbarExport) toolbarExport.disabled = !enabled;
+  const exportMenuItem = el('#mExport');
+  if(exportMenuItem) exportMenuItem.classList.toggle('disabled', !enabled);
 }
 function syncImportDrawingButton(){
   const button = el('#btnImport');
-  if(!button) return;
   const hasSourceImage = !!state.origin;
-  const label = button.querySelector('.drawing-action-label');
-  if(label){
-    label.dataset.i18n = hasSourceImage ? 'importDrawingReplace' : 'importDrawing';
-    label.textContent = t(label.dataset.i18n);
+  if(button){
+    const label = button.querySelector('.drawing-action-label');
+    if(label){
+      label.dataset.i18n = hasSourceImage ? 'importDrawingReplace' : 'importDrawing';
+      label.textContent = t(label.dataset.i18n);
+    }
   }
   const quickEdit = el('#mPaint');
   if(quickEdit){ quickEdit.disabled = !hasSourceImage; quickEdit.classList.toggle('disabled', !hasSourceImage); }
-  const toolbarEdit = document.querySelector('[data-quick-action="paint"]');
-  if(toolbarEdit) toolbarEdit.disabled = !hasSourceImage;
 }
 function getExportSettings(){
   if(!state.origin) return;
@@ -3250,15 +3231,12 @@ function syncEdaImportProtectionMenu(){
 function setupMenus(){
   // 下拉菜单由悬浮控制；focus-within 规则让键盘聚焦时也能访问同一菜单。
 
-  el('#mImport').onclick = () => el('#fileInput').click();
-  el('#btnImport').onclick = () => el('#fileInput').click();
-  el('#mExport').onclick = exportLayers;
-  el('#btnExport').onclick = exportLayers;
-  el('#btnExportSelected').onclick = exportSelectedLayer;
+  const bindClick = (selector, action) => { const button = el(selector); if(button) button.onclick = action; };
+  bindClick('#btnImport', () => el('#fileInput').click());
+  bindClick('#btnExport', exportLayers);
+  bindClick('#btnExportSelected', exportSelectedLayer);
   el('#btnImportSelectedEda').onclick = importSelectedLayerToEda;
   el('#btnImportAllEda').onclick = importAllLayersToEda;
-  el('#mSave').onclick = saveProject;
-  el('#mLoad').onclick = () => el('#projInput').click();
   el('#mPaint').onclick = openPaintEditor;
   el('#mFilter').onclick = openFilterDialog;
   el('#mDP').onclick = openDPDialog;
@@ -3269,14 +3247,19 @@ function setupMenus(){
   el('#mColor').onclick = openColorDialog;
   el('#mReset').onclick = resetAllSettings;
   el('#mCheckUpdates').onclick = checkForUpdates;
-  el('#btnStarProject').onclick = () => window.open('https://github.com/' + GITHUB_REPOSITORY, '_blank', 'noopener');
-  el('#mGitHub').onclick = () => window.open('https://github.com/' + GITHUB_REPOSITORY, '_blank', 'noopener');
+  const repositoryUrls = {
+    installed:'https://github.com/tomatorigid/PCB_lightgraph',
+    portable:'https://github.com/Ashlixy17/PCB_lightgraph_Portable',
+    extension:'https://github.com/' + GITHUB_REPOSITORY
+  };
+  document.querySelectorAll('[data-repository-link]').forEach(button => {
+    button.onclick = () => window.open(repositoryUrls[button.dataset.repositoryLink], '_blank', 'noopener');
+  });
   el('#mIssueFeedback').onclick = () => window.open('https://github.com/' + GITHUB_REPOSITORY + '/issues/new', '_blank', 'noopener');
   const quickActions = {
     'import-image': () => el('#fileInput').click(),
     'save-project': saveProject,
-    'export-all': exportLayers,
-    'paint': openPaintEditor
+    'load-project': () => el('#projInput').click()
   };
   document.querySelectorAll('[data-quick-action]').forEach(button => {
     button.onclick = () => { const action = quickActions[button.dataset.quickAction]; if(action) action(); };
@@ -3460,10 +3443,9 @@ function init(){
   createSlider('sliderGrayThick', 'grayThick', 0, 12, GRAY_DEFAULTS.thickRadius, 0.2, v => { state.gray.thickRadius = v; });
   createSlider('sliderGrayBlur', 'grayBlur', 0, 8, GRAY_DEFAULTS.blurRadius, 0.1, v => { state.gray.blurRadius = v; });
 
-  // 将 EDA 导入区置于图纸操作区之前；默认展开两组常用操作。
-  const actionsGroup = el('#groupActions'), edaImportGroup = el('#groupEdaImport');
-  actionsGroup.before(edaImportGroup);
-  setGroupOpen('groupActions', true, false);
+  // EDA 导入区固定在左侧参数栏底部，并默认展开。
+  const edaImportGroup = el('#groupEdaImport');
+  el('#controls').append(edaImportGroup);
   setGroupOpen('groupEdaImport', true, false);
 
   // 折叠组标题点击
@@ -3493,7 +3475,6 @@ function init(){
     attachFortniteHoverEffect(btn);
     btn.addEventListener('click', function(){ setProcessingMode(this.dataset.processingMode, true); });
   });
-  attachFortniteHoverEffect(el('#btnStarProject'));
   document.querySelectorAll('.drawing-action-btn').forEach(attachFortniteHoverEffect);
   document.querySelectorAll('[data-view-mode]').forEach(btn => {
     btn.addEventListener('click', function(){ setViewMode(this.dataset.viewMode); });
